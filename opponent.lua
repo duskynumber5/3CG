@@ -1,0 +1,2 @@
+-- opponent will draw random cards from their pile each round
+-- mana tracker
