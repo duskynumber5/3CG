@@ -10,6 +10,7 @@ function love.load()
     GameClass:boardSetup()
 
     playerDeck = PlayerClass:deck()
+    PlayerClass:hand()
 end
 
 function love.update()

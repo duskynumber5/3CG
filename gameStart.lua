@@ -80,6 +80,7 @@ function GameClass:boardSetup()
         w = w, 
         h = h
     }
+    mouseWasDown = false
 
     -- computer card places
     local x = 10
@@ -108,13 +109,20 @@ end
 function GameClass:update()
     checkForMouseMoving()
 
-    for i = #playerDeck, 1, -1 do
-        local card = playerDeck[i]
+    for i = #playerHand, 1, -1 do
+        local card = playerHand[i]
 
         if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
             grabber:grab(card)
         end
+
+        if card.position.x == drawPile.x - 13.5 and card.position.y == drawPile.y and card.state == CARD_STATE.MOUSE_OVER then
+            if love.mouse.isDown(1) and not mouseWasDown then
+                PlayerClass:draw1()
+            end
+        end
     end
+    mouseWasDown = love.mouse.isDown(1)
 end
 
 function GameClass:deal()
@@ -134,8 +142,8 @@ function GameClass:draw()
 
     -- draw pile
     love.graphics.rectangle("line", drawPile.x, drawPile.y, drawPile.w, drawPile.h, 6 ,6)
-
-    for _, card in ipairs(playerDeck) do
+    
+    for _, card in ipairs(playerHand) do
         card:draw()
     end
 
@@ -143,8 +151,8 @@ function GameClass:draw()
 
     local debugx = 400
     local debugy = 100
-    for _, position in ipairs(validPositions) do
-        love.graphics.print(tostring(position.x .. " " .. position.y), debugx, debugy)
+    for _, card in ipairs(playerHand) do
+        love.graphics.print(tostring(card), debugx, debugy)
         debugy = debugy + 15
     end
 
@@ -155,21 +163,7 @@ function checkForMouseMoving()
         return
     end
 
-    for _, card in ipairs(cardTable) do
-        card:checkForMouseOver(grabber)
-    end
-    
-    for _, card in ipairs(wasteCards) do
-        card:checkForMouseOver(grabber)
-    end
-end
-
-function checkForMouseMoving()
-    if grabber.currentMousePos == nil then
-        return
-    end
-
-    for _, card in ipairs(playerDeck) do
+    for _, card in ipairs(playerHand) do
         card:checkForMouseOver(grabber)
     end
 end
