@@ -11,6 +11,8 @@ function GrabberClass:new()
   
     grabber.heldObject = nil
 
+    grabber.stackCard = nil
+
     return grabber
 end
 
@@ -60,7 +62,7 @@ function GrabberClass:release()
     local isValidReleasePosition = false
 
     local pos = checkForCardOver()
-    if pos then
+    if pos and not self.stackCard then
         isValidReleasePosition = true
         table.remove(playerHand, #playerHand)
         table.insert(playerBoard, self.heldObject)
@@ -86,7 +88,9 @@ function GrabberClass:release()
     end
 
     self.heldObject.state = 0
+    self.heldObject.grabbable = true
     
+    self.stackCard = nil
     self.heldObject = nil
     self.grabPos = nil
 end
@@ -94,21 +98,22 @@ end
 function checkForCardOver()    
     for _, pos in ipairs(validPositions) do
         local mousePos = grabber.currentMousePos
+
         if mousePos.x > pos.x and mousePos.x < pos.x + 70 and
         mousePos.y > pos.y and mousePos.y < pos.y + 90 then
             
             local occupied = false
 
-            for _, card in ipairs(playerDeck) do
+            for _, card in ipairs(playerBoard) do
                 if card ~= grabber.heldObject and
-                   card.position.x == pos.x and
+                   card.position.x == pos.x - 13.5 and
                    card.position.y == pos.y then
                     occupied = true
                     break
                 end
             end
 
-            if not occupied and pos.x >= 1000 - (IMAGE_W*3 + 110) then
+            if not occupied then
                 return pos
             end
         end

@@ -18,7 +18,6 @@ function CardClass:newCard(x, y, image, grabbable)
     card.size = Vector(70, 90)
     card.image = image
 
-    card.faceUp = false
     card.grabbable = grabbable
 
     card.NAME = nil 
@@ -60,4 +59,24 @@ function CardClass:checkForMouseOver()
         mousePos.y < self.position.y + self.size.y
 
     self.state = isMouseOver and CARD_STATE.MOUSE_OVER or CARD_STATE.IDLE
+
+    if self.state == CARD_STATE.MOUSE_OVER and playerBoard[self] then
+        if grabber.heldObject then
+    
+            local hasCardOnTop = false
+            for _, other in ipairs(playerBoard) do
+                if other ~= self and
+                   other.position.x == self.position.x and
+                   other.position.y > self.position.y and
+                   (other.position.y - self.position.y) <= 35 then
+                    hasCardOnTop = true
+                    break
+                end
+            end
+    
+            if not hasCardOnTop then
+                grabber.stackCard = self
+            end
+        end
+    end
 end

@@ -49,7 +49,7 @@ function GameClass:boardSetup()
 
     -- player card places
     local x = 1000 - (IMAGE_W*3 + 110)
-    local y = 900 - ((IMAGE_H)*4 + (110 - IMAGE_H)*4)
+    local y = 900 - ((IMAGE_H)*3 + (110 - IMAGE_H)*3)
 
     for i = 1, 3, 1 do
         table.insert(validPositions, {
@@ -58,17 +58,7 @@ function GameClass:boardSetup()
                 w = w,
                 h = h
             })
-        for i = 4, 1, -1 do
-            y = y + 110
-            table.insert(validPositions, {
-                x = x,
-                y = y,
-                w = w,
-                h = h
-            })
-        end
         x = x + (110)
-        y = 900 - ((IMAGE_H)*4 + (110 - IMAGE_H)*4)
     end
 
     -- draw pile
@@ -123,6 +113,17 @@ function GameClass:update()
         end
     end
     mouseWasDown = love.mouse.isDown(1)
+
+    for _, card in ipairs(playerBoard) do
+        card:checkForMouseOver()
+        for i = #playerBoard, 1, -1 do
+        local card = playerBoard[i]
+            if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
+                grabber:grab(card)
+            end
+        end
+    end
+    
 end
 
 function GameClass:deal()
