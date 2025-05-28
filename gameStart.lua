@@ -117,7 +117,7 @@ function GameClass:update()
         end
 
         if card.position.x == drawPile.x - 13.5 and card.position.y == drawPile.y and card.state == CARD_STATE.MOUSE_OVER then
-            if love.mouse.isDown(1) and not mouseWasDown then
+            if love.mouse.isDown(1) and not mouseWasDown and #playerDeck > 0 then
                 PlayerClass:draw1()
             end
         end
@@ -142,7 +142,10 @@ function GameClass:draw()
 
     -- draw pile
     love.graphics.rectangle("line", drawPile.x, drawPile.y, drawPile.w, drawPile.h, 6 ,6)
-    
+
+    for _, card in ipairs(playerBoard) do
+        card:draw()
+    end
     for _, card in ipairs(playerHand) do
         card:draw()
     end

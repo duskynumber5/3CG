@@ -4,6 +4,8 @@
 
 -- player hand
 
+-- player board
+
 PlayerClass = {}
 
 function PlayerClass:new()
@@ -20,9 +22,13 @@ end
 function PlayerClass:deck()
     playerDeck = {}
 
-    for i = 1, 10, 1 do
-        local card = CardClass:newCard(validPositions[i].x - 13.5, validPositions[i].y, CARD_BACK, true)
-        table.insert(playerDeck, card)
+    if playerHand then
+        for i = 1, 10, 1 do
+            local card = CardClass:newCard(0, 0, CARD_BACK, true)
+            table.insert(playerDeck, card)
+        end
+    else 
+        return
     end
 
     playerDeck.deckCount = 1
@@ -37,8 +43,14 @@ function PlayerClass:hand()
     table.insert(playerHand, drawTop)
 end
 
+function PlayerClass:board()
+    playerBoard = {}
+end
+
 function PlayerClass:draw1()
     if #playerHand <= 7 then
+        playerDeck[1].position.x = validPositions[#playerHand].x - 13.5
+        playerDeck[1].position.y = validPositions[#playerHand].y
         table.insert(playerHand, playerDeck[1])
         table.remove(playerDeck, 1)
     end

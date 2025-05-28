@@ -38,10 +38,18 @@ function GrabberClass:grab(card)
 
     self.heldObject.state = CARD_STATE.GRABBED
     
-    self.heldObject.start = Vector(
-        self.heldObject.position.x,
-        self.heldObject.position.y
-    )
+    self.heldObject.start = {
+        x = self.heldObject.position.x,
+        y = self.heldObject.position.y
+    }
+
+    for j = #playerHand, 1, -1 do
+        if playerHand[j] == card then
+            table.remove(playerHand, j)
+            break
+        end
+    end
+    table.insert(playerHand, self.heldObject)
 end
 
 function GrabberClass:release()
@@ -54,12 +62,27 @@ function GrabberClass:release()
     local pos = checkForCardOver()
     if pos then
         isValidReleasePosition = true
+        table.remove(playerHand, #playerHand)
+        table.insert(playerBoard, self.heldObject)
+
         self.heldObject.position.x = pos.x - 13.5
         self.heldObject.position.y = pos.y
+
+        i = 2
+        for _, pos in ipairs(validPositions) do
+            if pos.x == self.heldObject.start.x + 13.5 and pos.y == self.heldObject.start.y then
+                for k = i, #playerHand, 1 do
+                    playerHand[k].position.x = validPositions[k - 1].x - 13.5
+                    playerHand[k].position.y = validPositions[k - 1].y
+                end
+            end
+            i = i + 1
+        end
     end
 
     if isValidReleasePosition == false then
-        self.heldObject.position = self.heldObject.start
+        self.heldObject.position.x = self.heldObject.start.x
+        self.heldObject.position.y = self.heldObject.start.y
     end
 
     self.heldObject.state = 0
@@ -85,7 +108,7 @@ function checkForCardOver()
                 end
             end
 
-            if not occupied then
+            if not occupied and pos.x >= 1000 - (IMAGE_W*3 + 110) then
                 return pos
             end
         end

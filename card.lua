@@ -30,8 +30,8 @@ function CardClass:newCard(x, y, image, grabbable)
 end
 
 function CardClass:draw()
-    width = playerDeck[1].image:getWidth()
-    height = playerDeck[1].image:getHeight()
+    width = 64
+    height = 64
 
     if self.state ~= CARD_STATE.IDLE and self.grabbable == true then
         love.graphics.setColor(0, 0, 0, 0.8) 
@@ -44,6 +44,7 @@ function CardClass:draw()
     love.graphics.draw(self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
 
     love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
+    love.graphics.print(tostring(self), self.position.x + 20, self.position.y - 30)
 end
 
 function CardClass:checkForMouseOver()
