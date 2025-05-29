@@ -23,9 +23,10 @@ function CardClass:newCard(x, y, image, grabbable)
     card.column = nil
     card.index = nil
 
-    card.NAME = nil 
-    card.POWER = nil
-    card.COST = nil
+    card.NAME = "name"
+    card.POWER = "power"
+    card.COST = "cost"
+    card.DESCRIPTION = "description"
     card.ACTION_TIME = nil
 
     return card
@@ -38,6 +39,8 @@ end
 function CardClass:draw()
     width = 64
     height = 64
+    black = {0, 0, 0, 0.8}
+    white = {1, 1, 1 ,1}
 
     if self.state ~= CARD_STATE.IDLE and self.grabbable == true then
         love.graphics.setColor(0, 0, 0, 0.8) 
@@ -45,12 +48,22 @@ function CardClass:draw()
         love.graphics.rectangle("fill", self.position.x + offset, (self.position.y - 12) + offset, width + 10, height + 30, 6, 6)
     end
 
-    love.graphics.setColor(1, 1, 1 ,1)
+    if self.state == CARD_STATE.MOUSE_OVER and self.grabbable == true then
+        love.graphics.setColor(black) 
+        love.graphics.rectangle("fill", 1000 / 3, 30, 325, 400, 6, 6)
+
+        love.graphics.setNewFont(40)
+        love.graphics.setColor(white) 
+        love.graphics.print(self.NAME, 1000 / 2.31, 40)
+    end
+
+    love.graphics.setColor(white)
+    love.graphics.setNewFont(12)
 
     love.graphics.draw(self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
 
     love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
-    love.graphics.print(tostring(self), self.position.x + 20, self.position.y - 30)
+    love.graphics.print(tostring(self.power), self.position.x + 20, self.position.y - 30)
 end
 
 function CardClass:checkForMouseOver()
