@@ -166,8 +166,12 @@ function GameClass:draw()
     for _, card in ipairs(playerBoard) do
         card:draw()
     end
-    for _, card in ipairs(playerHand) do
+    for i, card in ipairs(playerHand) do
+        if i == 1 and #playerDeck == 0 then
+            goto continue
+        end
         card:draw()
+        ::continue::
     end
 
     love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
