@@ -150,10 +150,13 @@ function GameClass:draw()
     end
     for _, column in ipairs(columns) do
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
+    end
+    for _, column in ipairs(columns) do
         for _, card in ipairs(column.cards) do
             card:draw()
         end
     end
+    
 
     -- draw computer board
     for _, position in ipairs(computerPositions) do

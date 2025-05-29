@@ -62,7 +62,12 @@ function GrabberClass:release()
     local isValidReleasePosition = false
 
     local columnIndex, column = checkForCardOver()
-    if column and not self.stackCard then
+    if column then 
+        if self.stackCard then
+            goto continue
+        end
+        ::oops::
+        self.stackCard = nil
         isValidReleasePosition = true
 
         self.heldObject.column = columnIndex
@@ -80,6 +85,11 @@ function GrabberClass:release()
         self.heldObject.position.y = column.y
 
         shiftDeck()
+        
+        ::continue::
+        if self.stackCard and not contains(columns[columnIndex].cards, self.stackCard) then
+            goto oops
+        end
     end
 
     if self.stackCard and self.stackCard.index == 1 and columns[self.stackCard.column].cards[1] == self.stackCard and not contains(columns[self.stackCard.column].cards, self.heldObject) then
