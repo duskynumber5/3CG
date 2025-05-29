@@ -19,6 +19,7 @@ IMAGE_H = CARD_BACK:getHeight()
 function GameClass:boardSetup()
     validPositions = {}
     computerPositions = {}
+    columns = {}
 
     local w = IMAGE_W + 5
     local h = IMAGE_H + 32
@@ -49,14 +50,15 @@ function GameClass:boardSetup()
 
     -- player card places
     local x = 1000 - (IMAGE_W*3 + 110)
-    local y = 900 - ((IMAGE_H)*3 + (110 - IMAGE_H)*3)
+    local y = 900 - ((IMAGE_H)*3.7 + (110 - IMAGE_H)*3.7)
 
     for i = 1, 3, 1 do
-        table.insert(validPositions, {
+        table.insert(columns, {
                 x = x,
                 y = y,
                 w = w,
-                h = h
+                h = h,
+                cards = {}
             })
         x = x + (110)
     end
@@ -123,6 +125,17 @@ function GameClass:update()
             end
         end
     end
+    for _, column in ipairs(columns) do
+        for _, card in ipairs(column.cards) do
+            card:checkForMouseOver()
+            for i = #column.cards, 1, -1 do
+            local card = column.cards[i]
+                if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
+                    grabber:grab(card)
+                end
+            end
+        end
+    end
     
 end
 
@@ -134,6 +147,12 @@ function GameClass:draw()
     -- draw player board
     for _, position in ipairs(validPositions) do
         love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
+    end
+    for _, column in ipairs(columns) do
+        love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
+        for _, card in ipairs(column.cards) do
+            card:draw()
+        end
     end
 
     -- draw computer board

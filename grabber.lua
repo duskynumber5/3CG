@@ -48,10 +48,10 @@ function GrabberClass:grab(card)
     for j = #playerHand, 1, -1 do
         if playerHand[j] == card then
             table.remove(playerHand, j)
+            table.insert(playerHand, self.heldObject)
             break
         end
     end
-    table.insert(playerHand, self.heldObject)
 end
 
 function GrabberClass:release()
@@ -61,24 +61,36 @@ function GrabberClass:release()
     
     local isValidReleasePosition = false
 
-    local pos = checkForCardOver()
-    if pos and not self.stackCard then
+    local columnIndex, column = checkForCardOver()
+    if column and not self.stackCard then
         isValidReleasePosition = true
-        table.remove(playerHand, #playerHand)
-        table.insert(playerBoard, self.heldObject)
 
-        self.heldObject.position.x = pos.x - 13.5
-        self.heldObject.position.y = pos.y
+        self.heldObject.column = columnIndex
 
-        i = 2
-        for _, pos in ipairs(validPositions) do
-            if pos.x == self.heldObject.start.x + 13.5 and pos.y == self.heldObject.start.y then
-                for k = i, #playerHand, 1 do
-                    playerHand[k].position.x = validPositions[k - 1].x - 13.5
-                    playerHand[k].position.y = validPositions[k - 1].y
-                end
+        for j = #playerHand, 1, -1 do
+            if playerHand[j] == self.heldObject then
+                table.remove(playerHand, #playerHand)
+                table.insert(columns[columnIndex].cards, self.heldObject)
+                self.heldObject.index = #columns[columnIndex].cards
+                break
             end
-            i = i + 1
+        end
+
+        self.heldObject.position.x = column.x - 13.5
+        self.heldObject.position.y = column.y
+
+        shiftDeck()
+    end
+
+    if self.stackCard and self.stackCard.index == 1 and columns[self.stackCard.column].cards[1] == self.stackCard and not contains(columns[self.stackCard.column].cards, self.heldObject) then
+        if #columns[self.stackCard.column].cards < 4 then
+            isValidReleasePosition = true
+            table.remove(playerHand, #playerHand)
+            shiftDeck()
+            
+            self.heldObject.position.x = self.stackCard.position.x
+            self.heldObject.position.y = self.stackCard.position.y + (100 * #columns[self.stackCard.column].cards)
+            table.insert(columns[self.stackCard.column].cards, self.heldObject)
         end
     end
 
@@ -96,29 +108,49 @@ function GrabberClass:release()
 end
 
 function checkForCardOver()    
-    for _, pos in ipairs(validPositions) do
+    for i, column in ipairs(columns) do
         local mousePos = grabber.currentMousePos
 
-        if mousePos.x > pos.x and mousePos.x < pos.x + 70 and
-        mousePos.y > pos.y and mousePos.y < pos.y + 90 then
+        if mousePos.x > column.x and mousePos.x < column.x + 70 and
+        mousePos.y > column.y and mousePos.y < column.y + 90 then
             
             local occupied = false
 
             for _, card in ipairs(playerBoard) do
                 if card ~= grabber.heldObject and
-                   card.position.x == pos.x - 13.5 and
-                   card.position.y == pos.y then
+                   card.position.x == column.x - 13.5 and
+                   card.position.y == column.y then
                     occupied = true
                     break
                 end
             end
 
             if not occupied then
-                return pos
+                return i, column
             end
         end
     end
-    return nil
+    return nil, nil
 end
 
+function contains(table, card)
+    for _, v in ipairs(table) do
+        if v == card then 
+            return true 
+        end
+    end
+    return false
+end
 
+function shiftDeck()
+    i = 2
+    for _, pos in ipairs(validPositions) do
+        if pos.x == grabber.heldObject.start.x + 13.5 and pos.y == grabber.heldObject.start.y then
+            for k = i, #playerHand, 1 do
+                playerHand[k].position.x = validPositions[k - 1].x - 13.5
+                playerHand[k].position.y = validPositions[k - 1].y
+            end
+        end
+        i = i + 1
+    end
+end

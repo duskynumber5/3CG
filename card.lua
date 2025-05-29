@@ -20,12 +20,19 @@ function CardClass:newCard(x, y, image, grabbable)
 
     card.grabbable = grabbable
 
+    card.column = nil
+    card.index = nil
+
     card.NAME = nil 
     card.POWER = nil
     card.COST = nil
     card.ACTION_TIME = nil
 
     return card
+end
+
+function CardClass:update()
+
 end
 
 function CardClass:draw()
@@ -60,7 +67,7 @@ function CardClass:checkForMouseOver()
 
     self.state = isMouseOver and CARD_STATE.MOUSE_OVER or CARD_STATE.IDLE
 
-    if self.state == CARD_STATE.MOUSE_OVER and playerBoard[self] then
+    if self.state == CARD_STATE.MOUSE_OVER and columnContains(self) then
         if grabber.heldObject then
     
             local hasCardOnTop = false
@@ -79,4 +86,15 @@ function CardClass:checkForMouseOver()
             end
         end
     end
+end
+
+function columnContains(item)
+    for _, column in ipairs(columns) do
+        for _, card in ipairs(column.cards) do
+            if card == item then 
+                return true 
+            end
+        end
+    end
+    return false
 end
