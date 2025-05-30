@@ -23,7 +23,7 @@ function PlayerClass:deck()
     playerDeck = {}
 
     if playerHand then
-        for i = 1, 10, 1 do
+        for i = 1, 20, 1 do
             local card = CardClass:newCard(0, 0, CARD_BACK, true)
             table.insert(playerDeck, card)
         end

@@ -2,8 +2,10 @@ require "gameStart"
 require "card"
 require "grabber"
 require "player"
+require "button"
 
 function love.load()
+    game = GameClass:new()
     grabber = GrabberClass:new()
     player = PlayerClass:new()
 
@@ -12,6 +14,8 @@ function love.load()
     PlayerClass:hand()
     playerDeck = PlayerClass:deck()
     PlayerClass:board()
+
+    GameClass:deal()
 end
 
 function love.update()

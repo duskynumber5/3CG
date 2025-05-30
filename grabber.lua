@@ -194,7 +194,7 @@ function shiftDeck()
 end
 
 function removeCardFromColumn(card)
-    if card.column == nil then return end
+    if card.column == nil or card.index == 1 then return end
     local col = columns[card.column]
     for i = #col.cards, 1, -1 do
         if col.cards[i] == card then

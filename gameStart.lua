@@ -1,5 +1,6 @@
 require "card"
 require "player"
+require "button"
 
 GameClass = {}
 
@@ -16,18 +17,35 @@ CARD_BACK = love.graphics.newImage("sprites/cardBack.png")
 IMAGE_W = CARD_BACK:getWidth()
 IMAGE_H = CARD_BACK:getHeight()
 
+GAME_STATE = {
+    PICK_CARDS = 0,
+    BATTLE = 1,
+}
+
+function GameClass:new()
+    local game = {}
+    local metadata = {__index = GameClass}
+    setmetatable(game, metadata)
+
+    game.state = nil
+
+    return game
+end
+
 function GameClass:boardSetup()
     validPositions = {}
     computerPositions = {}
     columns = {}
 
+    game.state = GAME_STATE.PICK_CARDS
+
     local w = IMAGE_W + 5
     local h = IMAGE_H + 32
 
     -- player hand
-    local x = 1000 / 3.3
+    local x = 1000 / 2.8
     local y = 900 / 1.4
-    for i = 1, 4, 1 do
+    for i = 1, 3, 1 do
         table.insert(validPositions, {
             x = x,
             y = y,
@@ -36,9 +54,9 @@ function GameClass:boardSetup()
         })
         x = x + (110)
     end
-    local x = 1000 / 2.8
+    local x = 1000 / 3.3
     local y = 900 / 1.2
-    for i = 1, 3, 1 do
+    for i = 1, 4, 1 do
         table.insert(validPositions, {
             x = x,
             y = y,
@@ -99,6 +117,8 @@ function GameClass:boardSetup()
             })
         x = x + (110)
     end
+
+    endTurnButton = button("end turn", switchStates, nil, 120, 40)
 end
 
 function GameClass:update()
@@ -143,10 +163,17 @@ function GameClass:update()
 end
 
 function GameClass:deal()
-
+    for i = 1, 3, 1 do
+        playerDeck[1].position.x = validPositions[#playerHand].x - 13.5
+        playerDeck[1].position.y = validPositions[#playerHand].y
+        table.insert(playerHand, playerDeck[1])
+        table.remove(playerDeck, 1)
+    end
 end
 
 function GameClass:draw()
+    love.graphics.setColor(white)
+
     -- draw player board
     for _, position in ipairs(validPositions) do
         love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
@@ -184,7 +211,13 @@ function GameClass:draw()
         ::continue::
     end
 
+    -- draw button
+    if game.state == GAME_STATE.PICK_CARDS then
+        endTurnButton:draw((1000 / 2.8) + 85, 900 / 2.1, 35, 20)
+    end
+
     love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
+    love.graphics.print("Game State: " .. tostring(game.state), 200, 200)
 
     local debugx = 400
     local debugy = 100
@@ -204,5 +237,15 @@ function checkForMouseMoving()
 
     for _, card in ipairs(playerHand) do
         card:checkForMouseOver(grabber)
+    end
+end
+
+function switchStates()
+    game.state = GAME_STATE.BATTLE
+end
+
+function love.mousepressed(x, y, button, istouch)
+    if button == 1 then
+        endTurnButton:checkPressed(x, y)
     end
 end
