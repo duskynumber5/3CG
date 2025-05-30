@@ -52,6 +52,15 @@ function GrabberClass:grab(card)
             break
         end
     end
+    for _, column in ipairs(columns) do
+        for j = #column.cards, 1, -1 do
+            if column.cards[j] == card then
+                table.remove(column.cards, j)
+                table.insert(column.cards, self.heldObject)
+                break
+            end
+        end
+    end
 end
 
 function GrabberClass:release()
@@ -70,16 +79,22 @@ function GrabberClass:release()
         self.stackCard = nil
         isValidReleasePosition = true
 
-        self.heldObject.column = columnIndex
-
         for j = #playerHand, 1, -1 do
             if playerHand[j] == self.heldObject then
                 table.remove(playerHand, #playerHand)
-                table.insert(columns[columnIndex].cards, self.heldObject)
-                self.heldObject.index = #columns[columnIndex].cards
                 break
             end
         end
+
+        removeCardFromColumn(self.heldObject)
+
+        if self.heldObject.column == columnIndex then
+            isValidReleasePosition = false
+            goto skip
+        end
+
+        table.insert(columns[columnIndex].cards, self.heldObject)
+        self.heldObject.index = #columns[columnIndex].cards
 
         self.heldObject.position.x = column.x - 13.5
         self.heldObject.position.y = column.y
@@ -90,17 +105,30 @@ function GrabberClass:release()
         if self.stackCard and not contains(columns[columnIndex].cards, self.stackCard) then
             goto oops
         end
+        self.heldObject.column = columnIndex
+        ::skip::
     end
 
-    if self.stackCard and self.stackCard.index == 1 and columns[self.stackCard.column].cards[1] == self.stackCard and not contains(columns[self.stackCard.column].cards, self.heldObject) then
+    if self.stackCard and self.stackCard.index == 1 and 
+    not contains(columns[self.stackCard.column].cards, self.heldObject) then
         if #columns[self.stackCard.column].cards < 4 then
-            isValidReleasePosition = true
-            table.remove(playerHand, #playerHand)
-            shiftDeck()
-            
-            self.heldObject.position.x = self.stackCard.position.x
-            self.heldObject.position.y = self.stackCard.position.y + (100 * #columns[self.stackCard.column].cards)
+
+            isValidReleasePosition = true   
+
+            if contains(playerHand, self.heldObject) then
+                table.remove(playerHand, #playerHand)
+                shiftDeck()
+            end
+
+            if not self.heldObject.column == nil then
+                table.remove(columns[self.heldObject.column].cards, self.heldObject.index)
+            end
+
+            self.heldObject.column = self.stackCard.column
             table.insert(columns[self.stackCard.column].cards, self.heldObject)
+
+            self.heldObject.position.x = self.stackCard.position.x
+            self.heldObject.position.y = self.stackCard.position.y + (100 * (#columns[self.stackCard.column].cards - 1))
         end
     end
 
@@ -162,5 +190,16 @@ function shiftDeck()
             end
         end
         i = i + 1
+    end
+end
+
+function removeCardFromColumn(card)
+    if card.column == nil then return end
+    local col = columns[card.column]
+    for i = #col.cards, 1, -1 do
+        if col.cards[i] == card then
+            table.remove(col.cards, i)
+            return
+        end
     end
 end

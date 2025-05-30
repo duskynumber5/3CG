@@ -188,9 +188,11 @@ function GameClass:draw()
 
     local debugx = 400
     local debugy = 100
-    for _, card in ipairs(playerHand) do
-        love.graphics.print(tostring(card), debugx, debugy)
-        debugy = debugy + 15
+    for i, column in ipairs(columns) do
+        for _, card in ipairs(column.cards) do
+            love.graphics.print(i .. ": " .. tostring(card), debugx, debugy)
+            debugy = debugy + 15
+        end
     end
 
 end
