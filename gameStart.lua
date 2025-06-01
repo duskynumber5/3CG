@@ -12,10 +12,10 @@ love.graphics.setBackgroundColor(brown)
 love.window.setTitle("game title!") -- make a title!!!!
 math.randomseed(os.time())
 
-CARD_BACK = love.graphics.newImage("sprites/cardBack.png")
+SPRITE_SHEET = love.graphics.newImage("sprites/frogCards.png")
 
-IMAGE_W = CARD_BACK:getWidth()
-IMAGE_H = CARD_BACK:getHeight()
+IMAGE_W = 64
+IMAGE_H = 64
 
 GAME_STATE = {
     PICK_CARDS = 0,
@@ -36,6 +36,7 @@ function GameClass:boardSetup()
     validPositions = {}
     computerPositions = {}
     columns = {}
+    discard = {}
 
     game.state = GAME_STATE.PICK_CARDS
 
@@ -118,7 +119,7 @@ function GameClass:boardSetup()
         x = x + (110)
     end
 
-    endTurnButton = button("end turn", switchStates, nil, 120, 40)
+    endTurnButton = button("end turn", battle, nil, 120, 40)
 end
 
 function GameClass:update()
@@ -172,6 +173,11 @@ function GameClass:deal()
 end
 
 function GameClass:draw()
+    -- draw button
+    if game.state == GAME_STATE.PICK_CARDS then
+        endTurnButton:draw((1000 / 2.8) + 85, 900 / 2.1, 35, 20)
+    end
+
     love.graphics.setColor(white)
 
     -- draw player board
@@ -182,10 +188,16 @@ function GameClass:draw()
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
     end
-    for _, column in ipairs(columns) do
-        for _, card in ipairs(column.cards) do
-            card:draw()
+    
+    for _, col in ipairs(columns) do
+        for _, card in ipairs(col.cards) do
+            if card ~= grabber.heldObject then
+                card:draw()
+            end
         end
+    end
+    if grabber.heldObject then
+        grabber.heldObject:draw()
     end
     
 
@@ -200,6 +212,10 @@ function GameClass:draw()
     -- discard pile
     love.graphics.rectangle("line", discardPile.x, discardPile.y, discardPile.w, discardPile.h, 6 ,6)
 
+    
+    for _, card in ipairs(discard) do
+        card:draw()
+    end
     for _, card in ipairs(playerBoard) do
         card:draw()
     end
@@ -209,11 +225,6 @@ function GameClass:draw()
         end
         card:draw()
         ::continue::
-    end
-
-    -- draw button
-    if game.state == GAME_STATE.PICK_CARDS then
-        endTurnButton:draw((1000 / 2.8) + 85, 900 / 2.1, 35, 20)
     end
 
     love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
@@ -227,7 +238,6 @@ function GameClass:draw()
             debugy = debugy + 15
         end
     end
-
 end
 
 function checkForMouseMoving()
@@ -240,7 +250,7 @@ function checkForMouseMoving()
     end
 end
 
-function switchStates()
+function battle()
     game.state = GAME_STATE.BATTLE
 end
 

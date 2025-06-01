@@ -6,6 +6,8 @@
 
 -- player board
 
+require "card"
+
 PlayerClass = {}
 
 function PlayerClass:new()
@@ -23,9 +25,14 @@ function PlayerClass:deck()
     playerDeck = {}
 
     if playerHand then
-        for i = 1, 20, 1 do
-            local card = CardClass:newCard(0, 0, CARD_BACK, true)
-            table.insert(playerDeck, card)
+        drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, 1, false)
+        table.insert(playerHand, drawTop)
+
+        for i = 1, 2 do
+            for j=2, 11 do
+                local card = CardClass:newCard(0, 0, j, true)
+                table.insert(playerDeck, card)
+            end
         end
     else 
         return
@@ -38,9 +45,6 @@ end
 
 function PlayerClass:hand()
     playerHand = {}
-
-    drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, CARD_BACK, false)
-    table.insert(playerHand, drawTop)
 end
 
 function PlayerClass:board()

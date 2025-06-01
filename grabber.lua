@@ -52,11 +52,11 @@ function GrabberClass:grab(card)
             break
         end
     end
-    for _, column in ipairs(columns) do
+    for i, column in ipairs(columns) do
         for j = #column.cards, 1, -1 do
             if column.cards[j] == card then
                 table.remove(column.cards, j)
-                table.insert(column.cards, self.heldObject)
+                card.column = i
                 break
             end
         end
@@ -86,46 +86,51 @@ function GrabberClass:release()
             end
         end
 
-        removeCardFromColumn(self.heldObject)
-
         if self.heldObject.column == columnIndex then
             isValidReleasePosition = false
-            goto skip
+        else
+            removeCardFromColumn(self.heldObject, self.heldObject.column)
+            shiftColumn(self.heldObject.column)
+
+            table.insert(columns[columnIndex].cards, self.heldObject)
+            self.heldObject.index = #columns[columnIndex].cards
+            columns[columnIndex].power = columns[columnIndex].power + self.heldObject.POWER
+
+            self.heldObject.position.x = column.x - 13.5
+            self.heldObject.position.y = column.y
+
+            shiftHand()
         end
-
-        table.insert(columns[columnIndex].cards, self.heldObject)
-        self.heldObject.index = #columns[columnIndex].cards
-
-        self.heldObject.position.x = column.x - 13.5
-        self.heldObject.position.y = column.y
-
-        shiftDeck()
         
+        self.heldObject.column = columnIndex
         ::continue::
         if self.stackCard and not contains(columns[columnIndex].cards, self.stackCard) then
             goto oops
         end
-        self.heldObject.column = columnIndex
         ::skip::
     end
 
     if self.stackCard and self.stackCard.index == 1 and 
-    not contains(columns[self.stackCard.column].cards, self.heldObject) then
+    self.heldObject.column ~= self.stackCard.column then
         if #columns[self.stackCard.column].cards < 4 then
+
+            if self.heldObject.index == 1 then
+                self.heldObject.index = nil
+            end
+
+            removeCardFromColumn(self.heldObject, self.heldObject.column)
+            shiftColumn(self.heldObject.column)
 
             isValidReleasePosition = true   
 
             if contains(playerHand, self.heldObject) then
                 table.remove(playerHand, #playerHand)
-                shiftDeck()
-            end
-
-            if not self.heldObject.column == nil then
-                table.remove(columns[self.heldObject.column].cards, self.heldObject.index)
+                shiftHand()
             end
 
             self.heldObject.column = self.stackCard.column
             table.insert(columns[self.stackCard.column].cards, self.heldObject)
+            columns[columnIndex].power = columns[columnIndex].power + self.heldObject.POWER
 
             self.heldObject.position.x = self.stackCard.position.x
             self.heldObject.position.y = self.stackCard.position.y + (100 * (#columns[self.stackCard.column].cards - 1))
@@ -135,6 +140,9 @@ function GrabberClass:release()
     if isValidReleasePosition == false then
         self.heldObject.position.x = self.heldObject.start.x
         self.heldObject.position.y = self.heldObject.start.y
+        if self.heldObject.column ~= nil then
+            table.insert(columns[self.heldObject.column].cards, self.heldObject)
+        end
     end
 
     self.heldObject.state = 0
@@ -180,7 +188,7 @@ function contains(table, card)
     return false
 end
 
-function shiftDeck()
+function shiftHand()
     i = 2
     for _, pos in ipairs(validPositions) do
         if pos.x == grabber.heldObject.start.x + 13.5 and pos.y == grabber.heldObject.start.y then
@@ -193,13 +201,23 @@ function shiftDeck()
     end
 end
 
-function removeCardFromColumn(card)
-    if card.column == nil or card.index == 1 then return end
-    local col = columns[card.column]
+function removeCardFromColumn(card, columnIndex)
+    if not columnIndex then return end
+    local col = columns[columnIndex]
     for i = #col.cards, 1, -1 do
         if col.cards[i] == card then
             table.remove(col.cards, i)
-            return
         end
+    end
+    col.power = col.power - card.POWER
+end
+
+function shiftColumn(columnIndex)
+    local col = columns[columnIndex]
+    if not col then return end
+
+    for i, card in ipairs(col.cards) do
+        card.position.y = col.y + 100 * (i - 1)
+        card.index = i
     end
 end

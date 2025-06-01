@@ -9,6 +9,8 @@ function love.load()
     grabber = GrabberClass:new()
     player = PlayerClass:new()
 
+    CardClass:loadCards()
+
     GameClass:boardSetup()
 
     PlayerClass:hand()
