@@ -43,7 +43,7 @@ function CardClass:loadCards()
         "Icarus",
         "Nyx",
         "Persephone",
-        "WoodenFrog"
+        "WoodenCow"
     }
 
 
@@ -75,7 +75,7 @@ function CardClass:newCard(x, y, counter, grabbable)
 
     card.NAME = "name"
     card.POWER = "power"
-    card.COST = "cost"
+    card.COST = 0
     card.DESCRIPTION = "description"
     card.ACTION_TIME = nil
 
@@ -83,7 +83,11 @@ function CardClass:newCard(x, y, counter, grabbable)
 end
 
 function CardClass:update()
-
+    -- for _, card in ipairs(playerHand) do
+    --     if card ~= playerHand[1] then
+    --         card.grabbable = card.COST <= player.mana
+    --     end
+    -- end
 end
 
 function CardClass:draw()
@@ -92,13 +96,13 @@ function CardClass:draw()
     black = {0, 0, 0, 0.8}
     white = {1, 1, 1 ,1}
 
-    if self.state ~= CARD_STATE.IDLE and self.grabbable == true then
+    if self.state ~= CARD_STATE.IDLE and self.grabbable == true and self.faceUp == true and grabber.heldObject == nil then
         love.graphics.setColor(0, 0, 0, 0.8) 
         local offset = 18 * (self.state == CARD_STATE.GRABBED and 2 or 1)
         love.graphics.rectangle("fill", self.position.x + offset, (self.position.y - 12) + offset, width + 10, height + 30, 6, 6)
     end
 
-    if self.state == CARD_STATE.MOUSE_OVER and self.grabbable == true and self.faceUp == true then
+    if self.state == CARD_STATE.MOUSE_OVER and self.grabbable == true and self.faceUp == true and grabber.heldObject == nil then
         love.graphics.setColor(black) 
         love.graphics.rectangle("fill", 1000 / 3, 120, 325, 300, 6, 6)
 
@@ -168,25 +172,33 @@ function CardClass:checkForMouseOver()
     
             if not hasCardOnTop then
                 grabber.stackCard = self
+                return
             end
         end
+        grabber.stackCard = nil
     end
 end
 
 function CardClass:discard()
-    local card = columns[1].cards[1]
-
-
-    if card then
-        table.remove(columns[1].cards, 1)
-        table.insert(discard, card)
-        card:discard()
+    for i, card in ipairs(columns[self.column].cards) do
+        if card == self then
+            table.remove(columns[self.column].cards, i)
+            table.insert(discard, card)
+        end
     end
 
-
-    self.position.x = (1000 / 3.3) + 220 - 13.5
-    self.position.y = 900 - ((IMAGE_H)*3.7 + (110 - IMAGE_H)*3.7)
+    self.position.x = discardPile.x - 13.5
+    self.position.y = discardPile.y
     self.faceUp = false
+end
+
+-- simple array shuffle :) https://gist.github.com/Uradamus/10323382 
+function CardClass:shuffle(deck)
+    for i = #deck, 2, -1 do
+        local random = math.random(i)
+        deck[i], deck[random] = deck[random], deck[i]
+    end
+    return deck
 end
 
 function columnContains(item)

@@ -1,3 +1,5 @@
+io.stdout:setvbuf("no")
+
 require "gameStart"
 require "card"
 require "grabber"

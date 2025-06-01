@@ -16,7 +16,7 @@ function PlayerClass:new()
     setmetatable(player, metadata)
 
     player.power = nil
-    player.mana = nil
+    player.mana = 1
 
     return player
 end
@@ -39,6 +39,8 @@ function PlayerClass:deck()
     end
 
     playerDeck.deckCount = 1
+
+    CardClass:shuffle(playerDeck)
 
     return playerDeck
 end

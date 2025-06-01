@@ -1,6 +1,7 @@
 require "card"
 require "player"
 require "button"
+require "playRound"
 
 GameClass = {}
 
@@ -28,6 +29,7 @@ function GameClass:new()
     setmetatable(game, metadata)
 
     game.state = nil
+    game.round = 1
 
     return game
 end
@@ -229,6 +231,7 @@ function GameClass:draw()
 
     love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
     love.graphics.print("Game State: " .. tostring(game.state), 200, 200)
+    love.graphics.print("Mana: " .. tostring(player.mana), 10, 800)
 
     local debugx = 400
     local debugy = 100
@@ -252,6 +255,8 @@ end
 
 function battle()
     game.state = GAME_STATE.BATTLE
+
+    PlayClass:playRound()
 end
 
 function love.mousepressed(x, y, button, istouch)

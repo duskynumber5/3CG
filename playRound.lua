@@ -11,6 +11,17 @@
 
 -- if tie flip coin
 
-if game.state = GAME_STATE.BATTLE then
+PlayClass = {}
 
+function PlayClass:playRound()
+    if game.state == GAME_STATE.BATTLE then
+        for _, column in ipairs(columns) do
+            for _,card in ipairs(column.cards) do
+                card.faceUp = false
+                card.grabbable = false
+            end
+        end
+    end
+
+    
 end
