@@ -19,13 +19,16 @@ PlayClass = {}
 function PlayClass:playRound()
     if game.state == GAME_STATE.BATTLE then
         for _, column in ipairs(columns) do
-            for _,card in ipairs(column.cards) do
+            for _, card in ipairs(column.cards) do
                 card.faceUp = false
                 card.grabbable = false
             end
         end
 
         game.state = GAME_STATE.REVEALING
+        for _, card in ipairs(playerHand) do
+            card.grabbable = false
+        end
         currentStageIndex = 1
         revealFrameDelay = 30
         revealFrameCounter = 0
@@ -78,6 +81,26 @@ function PlayClass:update()
         currentStageIndex = 1
         revealFrameCounter = 0
         game.state = GAME_STATE.PICK_CARDS
+
+        for _, card in ipairs(playerHand) do
+            if card ~= playerHand[1] then
+                card.grabbable = true
+            end
+        end
+
+        game.round = game.round + 1
+        if player.mana == 0 then
+            player.mana = game.round
+        else
+            player.mana = player.mana + game.round
+        end
+
+        if game.extraMana then
+            player.mana = player.mana + game.extraMana
+        end
+        PlayerClass:draw1()
+        ComputerClass:draw1()
+        game.extraMana = 0
     end
 end
 

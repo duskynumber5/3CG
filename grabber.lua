@@ -82,6 +82,8 @@ function GrabberClass:release()
         for j = #playerHand, 1, -1 do
             if playerHand[j] == self.heldObject then
                 table.remove(playerHand, #playerHand)
+                table.insert(stagedCards, self.heldObject)
+                player.mana = player.mana - self.heldObject.COST
                 break
             end
         end
@@ -95,8 +97,6 @@ function GrabberClass:release()
             table.insert(columns[columnIndex].cards, self.heldObject)
             self.heldObject.index = #columns[columnIndex].cards
             columns[columnIndex].power = columns[columnIndex].power + self.heldObject.POWER
-
-            table.insert(stagedCards, self.heldObject)
 
             self.heldObject.position.x = column.x - 13.5
             self.heldObject.position.y = column.y
@@ -128,6 +128,7 @@ function GrabberClass:release()
             if contains(playerHand, self.heldObject) then
                 table.remove(playerHand, #playerHand)
                 table.insert(stagedCards, self.heldObject)
+                player.mana = player.mana - self.heldObject.COST
                 shiftHand()
             end
 

@@ -11,7 +11,7 @@ love.window.setMode(1000, 900)
 brown = {0.70, 0.63, 0.34, 0}
 love.graphics.setBackgroundColor(brown)
 
-love.window.setTitle("game title!") -- make a title!!!!
+love.window.setTitle("game title!")
 math.randomseed(os.time())
 
 SPRITE_SHEET = love.graphics.newImage("sprites/frogCards.png")
@@ -24,7 +24,8 @@ GAME_STATE = {
     BATTLE = 1,
     REVEALING = 2,
     SCORING = 3,
-    IDLE = 4,
+    MENU = 4,
+    WIN = 5,
 }
 
 function GameClass:new()
@@ -34,6 +35,7 @@ function GameClass:new()
 
     game.state = nil
     game.round = 1
+    game.extraMana = 0
 
     return game
 end
@@ -133,6 +135,11 @@ end
 function GameClass:update()
     checkForMouseMoving()
 
+    -- win state
+    if player.score >= 25 or computer.score >= 25 then
+        game.state = GAME_STATE.WIN
+    end
+
     for i = #playerHand, 1, -1 do
         local card = playerHand[i]
 
@@ -141,7 +148,7 @@ function GameClass:update()
         end
 
         if card.position.x == drawPile.x - 13.5 and card.position.y == drawPile.y and card.state == CARD_STATE.MOUSE_OVER then
-            if love.mouse.isDown(1) and not mouseWasDown and #playerDeck > 0 then
+            if love.mouse.isDown(1) and not mouseWasDown then
                 PlayerClass:draw1()
             end
         end
@@ -168,11 +175,10 @@ function GameClass:update()
             end
         end
     end
-    
 end
 
 function GameClass:deal()
-    for i = 1, 3, 1 do
+    for i = 1, 4, 1 do
         playerDeck[1].position.x = validPositions[#playerHand].x - 13.5
         playerDeck[1].position.y = validPositions[#playerHand].y
         table.insert(playerHand, playerDeck[1])
@@ -182,6 +188,8 @@ end
 
 function GameClass:draw()
     love.graphics.setNewFont(30)
+
+    love.graphics.print("Round: " .. tostring(game.round), 0 + (2.6 * 30), 850)
 
     --scores
     local scoresX = (1000 / 2.23)
@@ -252,18 +260,57 @@ function GameClass:draw()
         ::continue::
     end
 
-    --debug
-    love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
-    love.graphics.print("Game State: " .. tostring(game.state), 200, 200)
+    -- win screen
+    if game.state == GAME_STATE.WIN then
 
-    local debugx = 400
-    local debugy = 100
-    for i, column in ipairs(columns) do
-        for _, card in ipairs(column.cards) do
-            love.graphics.print(i .. ": " .. tostring(card), debugx, debugy)
-            debugy = debugy + 15
+        for _, card in ipairs(playerHand) do
+            card.grabbable = false
+        end
+        
+        love.graphics.setColor(black)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    
+        love.graphics.setColor(white)
+        love.graphics.setFont(love.graphics.newFont(40))
+    
+        if player.score > computer.score then
+            local win = "YOU WIN!"
+            local reset = "Press R to Restart"
+
+            local textWidth = love.graphics.getFont():getWidth(win)
+            local textHeight = love.graphics.getFont():getHeight()
+
+            local screenWidth = love.graphics.getWidth()
+            local screenHeight = love.graphics.getHeight()
+        
+            love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2 - textHeight)
+            love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
+        else 
+            local win = "YOU LOSE!"
+            local reset = "Press R to Restart"
+            
+            local textWidth = love.graphics.getFont():getWidth(win)
+            local textHeight = love.graphics.getFont():getHeight()
+
+            local screenWidth = love.graphics.getWidth()
+            local screenHeight = love.graphics.getHeight()
+        
+            love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2 - textHeight)
+            love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
         end
     end
+
+
+    --debug
+    -- love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
+    -- love.graphics.print("Game State: " .. tostring(game.state), 200, 200)
+
+    -- local debugx = 400
+    -- local debugy = 100
+    -- for _, card in ipairs(stagedCards) do
+    --     love.graphics.print(i .. ": " .. tostring(card), debugx, debugy)
+    --     debugy = debugy + 15
+    -- end
 end
 
 function checkForMouseMoving()

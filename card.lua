@@ -85,7 +85,11 @@ function CardClass:newCard(x, y, counter, grabbable)
 end
 
 function CardClass:update()
-
+    for _, card in ipairs(playerHand) do
+        if card ~= playerHand[1] then
+            card.grabbable = card.COST <= player.mana
+        end
+    end
 end
 
 function CardClass:assignValues()
@@ -122,7 +126,7 @@ function CardClass:draw()
         love.graphics.rectangle("fill", self.position.x + offset, (self.position.y - 12) + offset, width + 10, height + 30, 6, 6)
     end
 
-    if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil then
+    if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil and playerHand[1] ~= self then
         love.graphics.setColor(black) 
         love.graphics.rectangle("fill", 1000 / 3, 120, 325, 300, 6, 6)
 
@@ -130,8 +134,8 @@ function CardClass:draw()
         love.graphics.setColor(white) 
         love.graphics.print(self.NAME, (1000 / 3) + 10, 130)
         love.graphics.setNewFont(20)
-        love.graphics.print("Power: " .. self.POWER, (1000 / 3) + 10, 190)
-        love.graphics.print("Cost: " .. self.COST, (1000 / 3) + 10, 220)
+        love.graphics.print("Cost: " .. self.COST, (1000 / 3) + 10, 190)
+        love.graphics.print("Power: " .. self.POWER, (1000 / 3) + 10, 220)
         love.graphics.print(self.DESCRIPTION, (1000 / 3) + 10, 270)
     end
 
@@ -229,6 +233,7 @@ function CardClass:discard()
     self.position.x = discardPile.x - 13.5
     self.position.y = discardPile.y
     self.faceUp = true
+    self.grabbable = false
 end
 
 -- simple array shuffle :) https://gist.github.com/Uradamus/10323382 

@@ -30,7 +30,7 @@ end
 function love.update()
     GameClass:update()
     grabber:update()
-    --CardClass:update()
+    CardClass:update()
     PlayClass:update()
 end
 

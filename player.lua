@@ -54,7 +54,7 @@ function PlayerClass:board()
 end
 
 function PlayerClass:draw1()
-    if #playerHand <= 7 then
+    if #playerHand <= 7 and #playerDeck > 0 then
         playerDeck[1].position.x = validPositions[#playerHand].x - 13.5
         playerDeck[1].position.y = validPositions[#playerHand].y
         table.insert(playerHand, playerDeck[1])

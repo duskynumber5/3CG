@@ -5,7 +5,7 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nGain +1 mana next turn.",
         ability = function()
-            player.mana = player.mana + 1
+            game.extraMana = game.extraMana + 1
         end
 
     },
@@ -63,14 +63,18 @@ CardValues = {
         power = 1,
         description = "When Revealed:\n\nDoubles its power if its\nthe strongest card here.",
         ability = function()
-            local strongest = true
-            for _, card in ipairs(columns[currentCard.column].cards) do
-                if currentCard.POWER <= card.POWER then
-                    strongest = true
+            if #columns[currentCard.column].cards > 1 then
+                local strongest = true
+                for _, card in ipairs(columns[currentCard.column].cards) do
+                    if card ~= currentCard and card.POWER >= currentCard.POWER then
+                        strongest = false
+                    end
                 end
-            end
 
-            if strongest == true then
+                if strongest == true then
+                    currentCard.POWER = currentCard.POWER * 2
+                end
+            else
                 currentCard.POWER = currentCard.POWER * 2
             end
         end
@@ -86,6 +90,14 @@ CardValues = {
                 currentCard.POWER = currentCard.POWER + 1
             else
                 currentCard:discard()
+                local col = columns[currentCard.column]
+                if not col then return end
+
+                for i, card in ipairs(col.cards) do
+                    card.position.y = col.y + 100 * (i - 1)
+                    card.index = i
+                end
+                currentStageIndex = currentStageIndex - 1
             end
         end
     },
@@ -110,6 +122,7 @@ CardValues = {
 
             for _, card in ipairs(discardCards) do
                 card:discard()
+                currentStageIndex = currentStageIndex - 1
             end
 
             currentCard.index = 1
@@ -123,14 +136,15 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nDiscard the lowest power\ncard in your hand.",
         ability = function()
-            local lowest = playerHand[2]
-            for i = 2, #playerHand do
-                if lowest.POWER > playerHand[i].POWER then
-                    lowest = playerHand[i]
+            if playerHand[2] then
+                local lowest = playerHand[2]
+                for i = 2, #playerHand do
+                    if lowest.POWER > playerHand[i].POWER then
+                        lowest = playerHand[i]
+                    end
                 end
+                lowest:discard()
             end
-
-            lowest:discard()
         end
     },
 
