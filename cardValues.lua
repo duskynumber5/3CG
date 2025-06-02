@@ -16,8 +16,8 @@ CardValues = {
         power = 3,
         description = "When Revealed:\n\nGain +2 power for each\nenemy card here.",
         ability = function()
-            for _, card in ipairs(opponentColunmns[currentCard.column].cards) do
-                currentCard.power = currentCard.power + card.power
+            for _, card in ipairs(computerColumns[currentCard.column].cards) do
+                currentCard.POWER = currentCard.POWER + card.POWER
             end
         end
     },
@@ -40,7 +40,7 @@ CardValues = {
         description = "When Revealed:\n\nGain +2 power for each\ncard in your discard pile.",
         ability = function()
             for _, card in ipairs(discardPile) do
-                currentCard.power = currentCard.power + 1
+                currentCard.POWER = currentCard.POWER + 1
             end
         end
     },
@@ -52,7 +52,7 @@ CardValues = {
         description = "When Revealed:\n\nGive cards in your hand\n+1 power.",
         ability = function()
             for _, card in ipairs(playerHand) do
-                card.power = card.power + 1
+                card.POWER = card.POWER + 1
             end
         end
     },
@@ -60,18 +60,18 @@ CardValues = {
     Hercules = {
         type = ON_REVEAL,
         cost = 2,
-        power = 3,
+        power = 1,
         description = "When Revealed:\n\nDoubles its power if its\nthe strongest card here.",
         ability = function()
             local strongest = true
             for _, card in ipairs(columns[currentCard.column].cards) do
-                if currentCard.power <= card.power then
-                    strongest = false
+                if currentCard.POWER <= card.POWER then
+                    strongest = true
                 end
             end
 
             if strongest == true then
-                currentCard.power = currentCard.power * 2
+                currentCard.POWER = currentCard.POWER * 2
             end
         end
     },
@@ -82,8 +82,8 @@ CardValues = {
         power = 1,
         description = "End of Turn:\n\nGains +1 power, but is\ndiscarded when its power\nis greater than 7.",
         ability = function()
-            if currentCard.power < 7 then
-                currentCard.power = currentCard.power + 1
+            if currentCard.POWER < 7 then
+                currentCard.POWER = currentCard.POWER + 1
             else
                 currentCard:discard()
             end
@@ -96,12 +96,24 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nDiscards your other cards\nhere, add their power\nto this card.",
         ability = function()
-            for _, card in ipairs(columns[currentCard.column].cards) do
+            local col = columns[currentCard.column]
+            if not col then return end
+
+            local discardCards = {}
+
+            for _, card in ipairs(col.cards) do
                 if card ~= currentCard then
-                    card:discard()
-                    currentCard.power = currentCard.power + card.power
+                    currentCard.POWER = currentCard.POWER + card.POWER
+                    table.insert(discardCards, card)
                 end
             end
+
+            for _, card in ipairs(discardCards) do
+                card:discard()
+            end
+
+            currentCard.index = 1
+            currentCard.position.y = col.y
         end
     },
 
@@ -111,10 +123,10 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nDiscard the lowest power\ncard in your hand.",
         ability = function()
-            local losest = playerHand[1]
-            for _, card in ipairs(playerHand) do
-                if lowest.power > card.power then
-                    lowest = card
+            local lowest = playerHand[2]
+            for i = 2, #playerHand do
+                if lowest.POWER > playerHand[i].POWER then
+                    lowest = playerHand[i]
                 end
             end
 
@@ -127,6 +139,7 @@ CardValues = {
         cost = 1,
         power = 1,
         description = "ribbi- i mean moo",
-        ability = nil
+        ability = function()
+        end
     },
 }

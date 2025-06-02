@@ -1,5 +1,6 @@
 require "card"
 require "player"
+require "computer"
 require "button"
 require "playRound"
 
@@ -21,6 +22,9 @@ IMAGE_H = 64
 GAME_STATE = {
     PICK_CARDS = 0,
     BATTLE = 1,
+    REVEALING = 2,
+    SCORING = 3,
+    IDLE = 4,
 }
 
 function GameClass:new()
@@ -38,7 +42,9 @@ function GameClass:boardSetup()
     validPositions = {}
     computerPositions = {}
     columns = {}
+    computerColumns = {}
     discard = {}
+    stagedCards = {}
 
     game.state = GAME_STATE.PICK_CARDS
 
@@ -46,7 +52,7 @@ function GameClass:boardSetup()
     local h = IMAGE_H + 32
 
     -- player hand
-    local x = 1000 / 2.8
+    local x = 1000 / 2.84
     local y = 900 / 1.4
     for i = 1, 3, 1 do
         table.insert(validPositions, {
@@ -57,7 +63,7 @@ function GameClass:boardSetup()
         })
         x = x + (110)
     end
-    local x = 1000 / 3.3
+    local x = 1000 / 3.38
     local y = 900 / 1.2
     for i = 1, 4, 1 do
         table.insert(validPositions, {
@@ -86,7 +92,7 @@ function GameClass:boardSetup()
     end
 
     -- draw pile
-    local x = (1000 / 3.3) + 110
+    local x = (1000 / 3.2) + 110
     local y = 900 - ((IMAGE_H)*3.7 + (110 - IMAGE_H)*3.7)
     drawPile = {
         x = x, 
@@ -97,7 +103,7 @@ function GameClass:boardSetup()
     mouseWasDown = false
 
     -- discard pile
-    local x = (1000 / 3.3) + 220
+    local x = (1000 / 3.5) + 220
     local y = 900 - ((IMAGE_H)*3.7 + (110 - IMAGE_H)*3.7)
     discardPile = {
         x = x, 
@@ -110,7 +116,7 @@ function GameClass:boardSetup()
     local x = 10
     local y = 30
     for i = 1, 3, 1 do
-        table.insert(columns, {
+        table.insert(computerColumns, {
                 x = x,
                 y = y,
                 w = w,
@@ -175,9 +181,22 @@ function GameClass:deal()
 end
 
 function GameClass:draw()
+    love.graphics.setNewFont(30)
+
+    --scores
+    local scoresX = (1000 / 2.23)
+    love.graphics.print("Scores", scoresX, 10)
+    love.graphics.print(tostring(player.score), scoresX + 90, 50)
+    love.graphics.print(tostring(computer.score), scoresX - 10, 50)
+
+    -- stats
+    love.graphics.print("Mana: " .. tostring(player.mana), 1000 - (7 * 30), 850)
+
+    love.graphics.setNewFont(12)
+
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
-        endTurnButton:draw((1000 / 2.8) + 85, 900 / 2.1, 35, 20)
+        endTurnButton:draw((1000 / 2.29), 900 / 2.1, 35, 20)
     end
 
     love.graphics.setColor(white)
@@ -187,6 +206,10 @@ function GameClass:draw()
         love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
     end
     for _, column in ipairs(columns) do
+        love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
+        love.graphics.print(tostring(column.power), column.x, column.y - 20)
+    end
+    for _, column in ipairs(computerColumns) do
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
     end
@@ -229,9 +252,9 @@ function GameClass:draw()
         ::continue::
     end
 
+    --debug
     love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
     love.graphics.print("Game State: " .. tostring(game.state), 200, 200)
-    love.graphics.print("Mana: " .. tostring(player.mana), 10, 800)
 
     local debugx = 400
     local debugy = 100

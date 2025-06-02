@@ -18,6 +18,8 @@ function PlayerClass:new()
     player.power = nil
     player.mana = 1
 
+    player.score = 0
+
     return player
 end
 
@@ -37,8 +39,6 @@ function PlayerClass:deck()
     else 
         return
     end
-
-    playerDeck.deckCount = 1
 
     CardClass:shuffle(playerDeck)
 

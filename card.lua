@@ -74,20 +74,40 @@ function CardClass:newCard(x, y, counter, grabbable)
     card.index = nil
 
     card.NAME = "name"
-    card.POWER = "power"
+    card.POWER = 0
     card.COST = 0
     card.DESCRIPTION = "description"
     card.ACTION_TIME = nil
+
+    card:assignValues()
 
     return card
 end
 
 function CardClass:update()
-    -- for _, card in ipairs(playerHand) do
-    --     if card ~= playerHand[1] then
-    --         card.grabbable = card.COST <= player.mana
-    --     end
-    -- end
+
+end
+
+function CardClass:assignValues()
+    if self.counter and cards[self.counter] then
+        local cardFace = cards[self.counter]
+        self.NAME = cardFace.name
+        if self.faceUp == true then
+            self.image = cardFace.image
+        else
+            self.image = cards[1].image
+        end
+    end
+
+    if self.counter and cards[self.counter] then
+        local values = CardValues[self.NAME]
+        if values then
+            self.POWER = values.power
+            self.COST = values.cost
+            self.DESCRIPTION = values.description
+            self.ACTION_TIME = values.type
+        end
+    end
 end
 
 function CardClass:draw()
@@ -102,7 +122,7 @@ function CardClass:draw()
         love.graphics.rectangle("fill", self.position.x + offset, (self.position.y - 12) + offset, width + 10, height + 30, 6, 6)
     end
 
-    if self.state == CARD_STATE.MOUSE_OVER and self.grabbable == true and self.faceUp == true and grabber.heldObject == nil then
+    if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil then
         love.graphics.setColor(black) 
         love.graphics.rectangle("fill", 1000 / 3, 120, 325, 300, 6, 6)
 
@@ -126,17 +146,9 @@ function CardClass:draw()
         else
             self.image = cards[1].image
         end
-
-        local values = CardValues[self.NAME]
-        if values then
-            self.POWER = values.power
-            self.COST = values.cost
-            self.DESCRIPTION = values.description
-            self.ACTION_TIME = values.type
-        end
-
-        love.graphics.draw(SPRITE_SHEET, self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
     end
+
+    love.graphics.draw(SPRITE_SHEET, self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
 
     love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
     love.graphics.print(tostring(self.column), self.position.x + 20, self.position.y - 30)
@@ -180,16 +192,43 @@ function CardClass:checkForMouseOver()
 end
 
 function CardClass:discard()
-    for i, card in ipairs(columns[self.column].cards) do
+    if self.column and columns[self.column] then
+        for i, card in ipairs(columns[self.column].cards) do
+            if card == self then
+                table.remove(columns[self.column].cards, i)
+                table.insert(discard, card)
+                for i, card in ipairs(stagedCards) do
+                    if card == self then
+                        table.remove(stagedCards, i)
+                        break
+                    end
+                end
+            end
+        end
+    end
+
+    for i, card in ipairs(playerHand) do
         if card == self then
-            table.remove(columns[self.column].cards, i)
+            table.remove(playerHand, i)
             table.insert(discard, card)
+
+            local index = 2
+            for _, pos in ipairs(validPositions) do
+                if pos.x == card.position.x + 13.5 and pos.y == card.position.y then
+                    for k = index, #playerHand, 1 do
+                        playerHand[k].position.x = validPositions[k - 1].x - 13.5
+                        playerHand[k].position.y = validPositions[k - 1].y
+                    end
+                end
+                index = index + 1
+            end
+            break
         end
     end
 
     self.position.x = discardPile.x - 13.5
     self.position.y = discardPile.y
-    self.faceUp = false
+    self.faceUp = true
 end
 
 -- simple array shuffle :) https://gist.github.com/Uradamus/10323382 

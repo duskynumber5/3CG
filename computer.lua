@@ -11,6 +11,8 @@ function ComputerClass:new()
     computer.power = nil
     computer.mana = 1
 
+    computer.score = 0
+
     return computer
 end
 
@@ -31,8 +33,6 @@ function ComputerClass:deck()
         return
     end
 
-    computerDeck.deckCount = 1
-
     CardClass:shuffle(computerDeck)
 
     return computerDeck
@@ -40,6 +40,10 @@ end
 
 function ComputerClass:hand()
     computerHand = {}
+end
+
+function ComputerClass:board()
+    computerBoard = {}
 end
 
 function ComputerClass:draw1()

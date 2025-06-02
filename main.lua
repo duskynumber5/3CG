@@ -10,6 +10,7 @@ function love.load()
     game = GameClass:new()
     grabber = GrabberClass:new()
     player = PlayerClass:new()
+    computer = ComputerClass:new()
 
     CardClass:loadCards()
 
@@ -19,13 +20,18 @@ function love.load()
     playerDeck = PlayerClass:deck()
     PlayerClass:board()
 
+    ComputerClass:hand()
+    computerDeck = ComputerClass:deck()
+    ComputerClass:board()
+
     GameClass:deal()
 end
 
 function love.update()
     GameClass:update()
     grabber:update()
-    CardClass:update()
+    --CardClass:update()
+    PlayClass:update()
 end
 
 function love.draw()
