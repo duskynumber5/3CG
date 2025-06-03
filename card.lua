@@ -154,7 +154,7 @@ function CardClass:draw()
 
     love.graphics.draw(SPRITE_SHEET, self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
 
-    love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
+    --love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
     love.graphics.print(tostring(self.column), self.position.x + 20, self.position.y - 30)
 end
 
@@ -197,16 +197,35 @@ end
 
 function CardClass:discard()
     if self.column and columns[self.column] then
-        for i, card in ipairs(columns[self.column].cards) do
+        local col = columns[self.column]
+        for i, card in ipairs(col.cards) do
             if card == self then
-                table.remove(columns[self.column].cards, i)
+                table.remove(col.cards, i)
                 table.insert(discard, card)
-                for i, card in ipairs(stagedCards) do
-                    if card == self then
-                        table.remove(stagedCards, i)
-                        break
-                    end
+
+                for j, card in ipairs(col.cards) do
+                    card.position.y = col.y + 100 * (j - 1)
+                    card.index = j
                 end
+
+                break
+            end
+        end
+    end
+
+    if self.column and computerColumns[self.column] then
+        local col = computerColumns[self.column]
+        for i, card in ipairs(col.cards) do
+            if card == self then
+                table.remove(col.cards, i)
+                table.insert(computerDiscardPile, card)
+
+                for j, card in ipairs(col.cards) do
+                    card.position.y = col.y + 100 * (j - 1)
+                    card.index = j
+                end
+
+                break
             end
         end
     end
@@ -216,16 +235,19 @@ function CardClass:discard()
             table.remove(playerHand, i)
             table.insert(discard, card)
 
-            local index = 2
-            for _, pos in ipairs(validPositions) do
-                if pos.x == card.position.x + 13.5 and pos.y == card.position.y then
-                    for k = index, #playerHand, 1 do
-                        playerHand[k].position.x = validPositions[k - 1].x - 13.5
-                        playerHand[k].position.y = validPositions[k - 1].y
-                    end
-                end
-                index = index + 1
+            for j = i, #playerHand do
+                playerHand[j].position.x = validPositions[j - 1].x - 13.5
+                playerHand[j].position.y = validPositions[j - 1].y
             end
+
+            break
+        end
+    end
+
+    for i, card in ipairs(computerHand) do
+        if card == self then
+            table.remove(computerHand, i)
+            table.insert(computerDiscardPile, card)
             break
         end
     end

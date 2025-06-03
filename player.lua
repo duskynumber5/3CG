@@ -17,6 +17,7 @@ function PlayerClass:new()
 
     player.power = nil
     player.mana = 1
+    player.extraMana = 0
 
     player.score = 0
 

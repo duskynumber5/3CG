@@ -5,7 +5,11 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nGain +1 mana next turn.",
         ability = function()
-            game.extraMana = game.extraMana + 1
+            if currentCard.position.x > 500 then 
+                player.extraMana = player.extraMana + 1
+            else
+                computer.extraMana = computer.extraMana + 1
+            end
         end
 
     },
@@ -16,8 +20,18 @@ CardValues = {
         power = 3,
         description = "When Revealed:\n\nGain +2 power for each\nenemy card here.",
         ability = function()
-            for _, card in ipairs(computerColumns[currentCard.column].cards) do
-                currentCard.POWER = currentCard.POWER + card.POWER
+            if currentCard.position.x > 500 then
+                if #computerColumns[currentCard.column].cards > 0 then
+                    for _, card in ipairs(computerColumns[currentCard.column].cards) do
+                        currentCard.POWER = currentCard.POWER + 2
+                    end
+                end
+            else
+                if #columns[currentCard.column].cards > 0 then
+                    for _, card in ipairs(columns[currentCard.column].cards) do
+                        currentCard.POWER = currentCard.POWER + 2
+                    end
+                end
             end
         end
     },
@@ -39,8 +53,14 @@ CardValues = {
         power = 1,
         description = "When Revealed:\n\nGain +2 power for each\ncard in your discard pile.",
         ability = function()
-            for _, card in ipairs(discardPile) do
-                currentCard.POWER = currentCard.POWER + 1
+            if currentCard.position.x > 500 then
+                for _, card in ipairs(discardPile) do
+                    currentCard.POWER = currentCard.POWER + 1
+                end
+            else
+                for _, card in ipairs(computerDiscardPile) do
+                    currentCard.POWER = currentCard.POWER + 1
+                end
             end
         end
     },
@@ -51,8 +71,14 @@ CardValues = {
         power = 3,
         description = "When Revealed:\n\nGive cards in your hand\n+1 power.",
         ability = function()
-            for _, card in ipairs(playerHand) do
-                card.POWER = card.POWER + 1
+            if currentCard.position.x > 500 then
+                for _, card in ipairs(playerHand) do
+                    card.POWER = card.POWER + 1
+                end
+            else
+                for _, card in ipairs(computerHand) do
+                    card.POWER = card.POWER + 1
+                end
             end
         end
     },
@@ -63,19 +89,36 @@ CardValues = {
         power = 1,
         description = "When Revealed:\n\nDoubles its power if its\nthe strongest card here.",
         ability = function()
-            if #columns[currentCard.column].cards > 1 then
-                local strongest = true
-                for _, card in ipairs(columns[currentCard.column].cards) do
-                    if card ~= currentCard and card.POWER >= currentCard.POWER then
-                        strongest = false
+            if currentCard.position.x > 500 then
+                if #columns[currentCard.column].cards > 1 then
+                    local strongest = true
+                    for _, card in ipairs(columns[currentCard.column].cards) do
+                        if card ~= currentCard and card.POWER >= currentCard.POWER then
+                            strongest = false
+                        end
                     end
-                end
 
-                if strongest == true then
+                    if strongest == true then
+                        currentCard.POWER = currentCard.POWER * 2
+                    end
+                else
                     currentCard.POWER = currentCard.POWER * 2
                 end
             else
-                currentCard.POWER = currentCard.POWER * 2
+                if #computerColumns[currentCard.column].cards > 1 then
+                    local computerStrongest = true
+                    for _, card in ipairs(computerColumns[currentCard.column].cards) do
+                        if card ~= currentCard and card.POWER >= currentCard.POWER then
+                            computerStrongest = false
+                        end
+                    end
+
+                    if computerStrongest == true then
+                        currentCard.POWER = currentCard.POWER * 2
+                    end
+                else
+                    currentCard.POWER = currentCard.POWER * 2
+                end
             end
         end
     },
@@ -94,7 +137,7 @@ CardValues = {
                 if not col then return end
 
                 for i, card in ipairs(col.cards) do
-                    card.position.y = col.y + 100 * (i - 1)
+                    card.position.y = col.y + (100 * (i - 1))
                     card.index = i
                 end
                 currentStageIndex = currentStageIndex - 1
@@ -108,25 +151,48 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nDiscards your other cards\nhere, add their power\nto this card.",
         ability = function()
-            local col = columns[currentCard.column]
-            if not col then return end
+            if currentCard.position.x > 500 then
+                local col = columns[currentCard.column]
+                if not col then return end
 
-            local discardCards = {}
+                local discardCards = {}
 
-            for _, card in ipairs(col.cards) do
-                if card ~= currentCard then
-                    currentCard.POWER = currentCard.POWER + card.POWER
-                    table.insert(discardCards, card)
+                for _, card in ipairs(col.cards) do
+                    if card ~= currentCard then
+                        currentCard.POWER = currentCard.POWER + card.POWER
+                        table.insert(discardCards, card)
+                    end
                 end
-            end
 
-            for _, card in ipairs(discardCards) do
-                card:discard()
-                currentStageIndex = currentStageIndex - 1
-            end
+                for _, card in ipairs(discardCards) do
+                    card:discard()
+                    currentStageIndex = currentStageIndex - 1
+                end
 
-            currentCard.index = 1
-            currentCard.position.y = col.y
+                currentCard.index = 1
+                currentCard.position.y = col.y
+                currentCard.position.x = col.x - 13.5
+            else
+                local col = computerColumns[currentCard.column]
+                if not col then return end
+
+                local computerDiscardCards = {}
+
+                for _, card in ipairs(col.cards) do
+                    if card ~= currentCard then
+                        currentCard.POWER = currentCard.POWER + card.POWER
+                        table.insert(computerDiscardCards, card)
+                    end
+                end
+
+                for _, card in ipairs(computerDiscardCards) do
+                    card:discard()
+                    currentStageIndex = currentStageIndex - 1
+                end
+
+                currentCard.index = 1
+                currentCard.position.y = col.y
+            end
         end
     },
 
@@ -136,14 +202,26 @@ CardValues = {
         power = 2,
         description = "When Revealed:\n\nDiscard the lowest power\ncard in your hand.",
         ability = function()
-            if playerHand[2] then
-                local lowest = playerHand[2]
-                for i = 2, #playerHand do
-                    if lowest.POWER > playerHand[i].POWER then
-                        lowest = playerHand[i]
+            if currentCard.position.x > 500 then
+                if playerHand[2] then
+                    local lowest = playerHand[2]
+                    for i = 2, #playerHand do
+                        if lowest.POWER > playerHand[i].POWER then
+                            lowest = playerHand[i]
+                        end
                     end
+                    lowest:discard()
                 end
-                lowest:discard()
+            else
+                if computerHand[1] then
+                    local lowest = computerHand[1]
+                    for i = 1, #computerHand do
+                        if lowest.POWER > computerHand[i].POWER then
+                            lowest = computerHand[i]
+                        end
+                    end
+                    lowest:discard()
+                end
             end
         end
     },

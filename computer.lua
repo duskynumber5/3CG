@@ -10,6 +10,7 @@ function ComputerClass:new()
 
     computer.power = nil
     computer.mana = 1
+    computer.extraMana = 0
 
     computer.score = 0
 
@@ -20,12 +21,9 @@ function ComputerClass:deck()
     computerDeck = {}
 
     if computerHand then
-        drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, 1, false)
-        table.insert(computerHand, drawTop)
-
         for i = 1, 2 do
             for j=2, 11 do
-                local card = CardClass:newCard(0, 0, j, true)
+                local card = CardClass:newCard(0, 0, j, false)
                 table.insert(computerDeck, card)
             end
         end
@@ -48,9 +46,37 @@ end
 
 function ComputerClass:draw1()
     if #computerHand <= 7 then
-        computerDeck[1].position.x = validPositions[#computerHand].x - 13.5
-        computerDeck[1].position.y = validPositions[#computerHand].y
         table.insert(computerHand, computerDeck[1])
         table.remove(computerDeck, 1)
+    end
+end
+
+function ComputerClass:pickCards()
+    for i, card in ipairs(computerHand) do
+        if card.COST <= computer.mana then
+            ::retry::
+            index = math.random(3)
+            if #computerColumns[index].cards < 4 then
+                table.insert(computerColumns[index].cards, card)
+                table.remove(computerHand, i)
+                card.position.x = computerColumns[index].x - 13.5
+                card.position.y = computerColumns[index].y + (100 * (#computerColumns[index].cards - 1))
+
+                card.column = index
+
+                computerColumns[index].power = computerColumns[index].power + card.POWER
+                computer.mana = computer.mana - card.COST
+            else
+                goto retry
+            end
+        end
+        
+        if i == #computerHand then
+            endTurn = true
+        end
+    end
+
+    if computer.mana == 0 then
+        endTurn = true
     end
 end

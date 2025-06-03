@@ -11,7 +11,7 @@ love.window.setMode(1000, 900)
 brown = {0.70, 0.63, 0.34, 0}
 love.graphics.setBackgroundColor(brown)
 
-love.window.setTitle("game title!")
+love.window.setTitle("Frogora’s Box")
 math.randomseed(os.time())
 
 SPRITE_SHEET = love.graphics.newImage("sprites/frogCards.png")
@@ -35,7 +35,6 @@ function GameClass:new()
 
     game.state = nil
     game.round = 1
-    game.extraMana = 0
 
     return game
 end
@@ -46,6 +45,7 @@ function GameClass:boardSetup()
     columns = {}
     computerColumns = {}
     discard = {}
+    computerDiscardPile = {}
     stagedCards = {}
 
     game.state = GAME_STATE.PICK_CARDS
@@ -184,6 +184,10 @@ function GameClass:deal()
         table.insert(playerHand, playerDeck[1])
         table.remove(playerDeck, 1)
     end
+    for i = 1, 4, 1 do
+        table.insert(computerHand, computerDeck[1])
+        table.remove(computerDeck, 1)
+    end
 end
 
 function GameClass:draw()
@@ -217,6 +221,8 @@ function GameClass:draw()
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
     end
+    
+    -- draw computer board
     for _, column in ipairs(computerColumns) do
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
@@ -232,11 +238,11 @@ function GameClass:draw()
     if grabber.heldObject then
         grabber.heldObject:draw()
     end
-    
 
-    -- draw computer board
-    for _, position in ipairs(computerPositions) do
-        love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
+    for _, col in ipairs(computerColumns) do
+        for _, card in ipairs(col.cards) do
+            card:draw()
+        end
     end
 
     -- draw pile
@@ -249,9 +255,7 @@ function GameClass:draw()
     for _, card in ipairs(discard) do
         card:draw()
     end
-    for _, card in ipairs(playerBoard) do
-        card:draw()
-    end
+
     for i, card in ipairs(playerHand) do
         if i == 1 and #playerDeck == 0 then
             goto continue
@@ -264,7 +268,7 @@ function GameClass:draw()
     if game.state == GAME_STATE.WIN then
 
         for _, card in ipairs(playerHand) do
-            card.grabbable = false
+            card.grabbable = nil
         end
         
         love.graphics.setColor(black)
@@ -303,12 +307,12 @@ function GameClass:draw()
 
     --debug
     -- love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
-    -- love.graphics.print("Game State: " .. tostring(game.state), 200, 200)
+    love.graphics.print("computer Mana: " .. tostring(computer.mana), 200, 200)
 
     -- local debugx = 400
     -- local debugy = 100
-    -- for _, card in ipairs(stagedCards) do
-    --     love.graphics.print(i .. ": " .. tostring(card), debugx, debugy)
+    -- for _, card in ipairs(computerHand) do
+    --     love.graphics.print("computer: " .. tostring(card), debugx, debugy)
     --     debugy = debugy + 15
     -- end
 end

@@ -82,7 +82,6 @@ function GrabberClass:release()
         for j = #playerHand, 1, -1 do
             if playerHand[j] == self.heldObject then
                 table.remove(playerHand, #playerHand)
-                table.insert(stagedCards, self.heldObject)
                 player.mana = player.mana - self.heldObject.COST
                 break
             end

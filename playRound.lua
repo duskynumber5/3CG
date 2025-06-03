@@ -1,16 +1,3 @@
--- guides events of each round
--- triggered by each player confirming their selection
-
--- take cards
-
--- flip cards
-
--- process actions
-
--- declare winner
-
--- if tie flip coin
-
 require "player"
 require "computer"
 
@@ -18,10 +5,63 @@ PlayClass = {}
 
 function PlayClass:playRound()
     if game.state == GAME_STATE.BATTLE then
+        endTurn = false
+        
         for _, column in ipairs(columns) do
             for _, card in ipairs(column.cards) do
                 card.faceUp = false
                 card.grabbable = false
+            end
+        end
+        
+        local tries = 0
+        repeat
+            ComputerClass:pickCards()
+            tries = tries + 1
+        until endTurn == true or tries > 10
+
+        for _, column in ipairs(computerColumns) do
+            for _, card in ipairs(column.cards) do
+                card.faceUp = false
+            end
+        end
+
+        stagedCards = {}
+
+        for i = 1, 3 do
+            local playerCol = columns[i]
+            local aiCol = computerColumns[i]
+
+            local playerPower, aiPower = 0, 0
+
+            for _, card in ipairs(playerCol.cards) do
+                playerPower = playerPower + card.POWER
+            end
+            for _, card in ipairs(aiCol.cards) do
+                aiPower = aiPower + card.POWER
+            end
+
+            local flipFirst = "player"
+            if aiPower > playerPower then
+                flipFirst = "ai"
+            elseif aiPower == playerPower then
+                flipFirst = math.random(2) == 1 and "player" or "ai"
+            end
+
+            if flipFirst == "player" then
+                for _, card in ipairs(playerCol.cards) do
+                    table.insert(stagedCards, card)
+                end
+                for _, card in ipairs(aiCol.cards) do
+                    table.insert(stagedCards, card)
+                end
+            else
+                for _, card in ipairs(aiCol.cards) do
+                    table.insert(stagedCards, card)
+                end
+                for _, card in ipairs(playerCol.cards) do
+                    table.insert(stagedCards, card)
+                end
             end
         end
 
@@ -89,18 +129,30 @@ function PlayClass:update()
         end
 
         game.round = game.round + 1
+        -- mana update
         if player.mana == 0 then
             player.mana = game.round
         else
             player.mana = player.mana + game.round
         end
 
-        if game.extraMana then
-            player.mana = player.mana + game.extraMana
+        if player.extraMana then
+            player.mana = player.mana + player.extraMana
         end
+
+        if computer.mana == 0 then
+            computer.mana = game.round
+        else
+            computer.mana = computer.mana + game.round
+        end
+
+        if computer.extraMana then
+            computer.mana = computer.mana + computer.extraMana
+        end
+
         PlayerClass:draw1()
         ComputerClass:draw1()
-        game.extraMana = 0
+        player.extraMana = 0
     end
 end
 
