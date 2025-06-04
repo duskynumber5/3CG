@@ -14,9 +14,9 @@ STATE PATTERNS
 
 I use states to control what stage of each round the game is in: picking cards, battling, revealing, and scoring. Also to track card states in order to determine when they get placed and when they are being hovered over or idle. 
 
-SEQUENCING PATTERNS
+UPDATE METHOD
 
-I used this pattern to iterate over the different decks, hands, and columns to get stats or make changes to certain cards within them. 
+I used this pattern to iterate over the different decks, hands, and columns to get stats or make changes to certain cards within them. I use htis to regurally check and reasign or update data to refect the actions in the game. 
 
 OBJECT POOL PATTERNS
 I use this to load in the cards with the same base assets and set them all to the same size. 
@@ -43,11 +43,10 @@ Adjustments: I made the screen size smaller for now to decrease the dead space.
 A postmortem on what you did well and what you would do differently if you were to do this project over again 
     (maybe some programming patterns that might have been a better fit?).
 
-write
+I think once I got my card abilities working they functioned well and I was happy with their implementation. I still have some bits of hard coding and redundent loops that I can clean up but they don't impead things too bad. Overall my implementation is decently strong and has some good qualities but in regards to simplicity and overall flow I think there is still room for imporvement. 
 
 ### ASSETS
 
 A list of all assets (sprites, SFX, fonts, music, shaders, etc.) used in this project.
 
 Card Sprites: Maddison Lobo
-Font: 

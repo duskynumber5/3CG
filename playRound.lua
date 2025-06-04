@@ -86,13 +86,13 @@ function PlayClass:update()
         if currentStageIndex > #stagedCards then
             for i = 1, 3 do
                 for _, card in ipairs(columns[i].cards) do
-                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.NAME ~= "Nyx" then
+                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.ACTION_TIME ~= ON_REVEAL then
                         currentCard = card
                         CardValues[card.NAME].ability()
                     end
                 end
                 for _, card in ipairs(computerColumns[i].cards) do
-                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.NAME ~= "Nyx" then
+                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.ACTION_TIME ~= ON_REVEAL then
                         currentCard = card
                         CardValues[card.NAME].ability()
                     end

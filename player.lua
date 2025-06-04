@@ -23,14 +23,19 @@ function PlayerClass:deck()
         drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, 1, false)
         table.insert(playerHand, drawTop)
 
-        for i = 1, 2 do
-            for j=2, 11 do
-                local card = CardClass:newCard(0, 0, j, true)
-                table.insert(playerDeck, card)
-            end
+        local pool = {}
+        for j = 2, 12 do
+            table.insert(pool, j)
+            table.insert(pool, j)
         end
-    else 
-        return
+
+        CardClass:shuffle(pool)
+
+        for i = 1, 20 do
+            local cardID = pool[i]
+            local card = CardClass:newCard(0, 0, cardID, true)
+            table.insert(playerDeck, card)
+        end
     end
 
     CardClass:shuffle(playerDeck)

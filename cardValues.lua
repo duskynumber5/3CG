@@ -235,4 +235,22 @@ CardValues = {
         ability = function()
         end
     },
+
+    Zeus = {
+        type = ON_REVEAL,
+        cost = 4,
+        power = 4,
+        description = "When Revealed:\n\nLower the power of each card\nin your opponent's hand by 1.",
+        ability = function()
+            if currentCard.position.x > 500 then
+                for _, card in ipairs(computerHand) do
+                    card.POWER = card.POWER - 1
+                end
+            else
+                for _, card in ipairs(playerHand) do
+                    card.POWER = card.POWER - 1
+                end
+            end
+        end
+    }
 }

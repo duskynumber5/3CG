@@ -43,11 +43,12 @@ function CardClass:loadCards()
         "Icarus",
         "Nyx",
         "Persephone",
-        "WoodenCow"
+        "WoodenCow",
+        "Zeus"
     }
 
 
-    for j=1, 11 do
+    for j=1, 12 do
         local card = {
             name = names[j],
             image = quads[j],
