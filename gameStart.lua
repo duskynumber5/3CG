@@ -6,7 +6,7 @@ require "playRound"
 
 GameClass = {}
 
-love.window.setMode(1000, 900)
+love.window.setMode(1000, 700)
 
 brown = {0.70, 0.63, 0.34, 0}
 love.graphics.setBackgroundColor(brown)
@@ -55,7 +55,7 @@ function GameClass:boardSetup()
 
     -- player hand
     local x = 1000 / 2.84
-    local y = 900 / 1.4
+    local y = 700 / 1.5
     for i = 1, 3, 1 do
         table.insert(validPositions, {
             x = x,
@@ -66,7 +66,7 @@ function GameClass:boardSetup()
         x = x + (110)
     end
     local x = 1000 / 3.38
-    local y = 900 / 1.2
+    local y = 700 / 1.2
     for i = 1, 4, 1 do
         table.insert(validPositions, {
             x = x,
@@ -95,7 +95,7 @@ function GameClass:boardSetup()
 
     -- draw pile
     local x = (1000 / 3.2) + 110
-    local y = 900 - ((IMAGE_H)*3.7 + (110 - IMAGE_H)*3.7)
+    local y = 700 - ((IMAGE_H)*3.2 + (110 - IMAGE_H)*3.2)
     drawPile = {
         x = x, 
         y = y, 
@@ -106,7 +106,7 @@ function GameClass:boardSetup()
 
     -- discard pile
     local x = (1000 / 3.5) + 220
-    local y = 900 - ((IMAGE_H)*3.7 + (110 - IMAGE_H)*3.7)
+    local y = 700 - ((IMAGE_H)*3.2 + (110 - IMAGE_H)*3.2)
     discardPile = {
         x = x, 
         y = y, 
@@ -193,7 +193,7 @@ end
 function GameClass:draw()
     love.graphics.setNewFont(30)
 
-    love.graphics.print("Round: " .. tostring(game.round), 0 + (2.6 * 30), 850)
+    love.graphics.print("Round: " .. tostring(game.round), 0 + (2.6 * 30), 650)
 
     --scores
     local scoresX = (1000 / 2.23)
@@ -202,13 +202,13 @@ function GameClass:draw()
     love.graphics.print(tostring(computer.score), scoresX - 10, 50)
 
     -- stats
-    love.graphics.print("Mana: " .. tostring(player.mana), 1000 - (7 * 30), 850)
+    love.graphics.print("Mana: " .. tostring(player.mana), 1000 - (7 * 30), 650)
 
     love.graphics.setNewFont(12)
 
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
-        endTurnButton:draw((1000 / 2.29), 900 / 2.1, 35, 20)
+        endTurnButton:draw((1000 / 2.29), 700 / 2.5, 35, 20)
     end
 
     love.graphics.setColor(white)
@@ -307,7 +307,7 @@ function GameClass:draw()
 
     --debug
     -- love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
-    love.graphics.print("computer Mana: " .. tostring(computer.mana), 200, 200)
+    -- love.graphics.print("computer Mana: " .. tostring(computer.mana), 200, 200)
 
     -- local debugx = 400
     -- local debugy = 100

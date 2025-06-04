@@ -1,11 +1,3 @@
--- player stats & deck
-
--- player deck
-
--- player hand
-
--- player board
-
 require "card"
 
 PlayerClass = {}

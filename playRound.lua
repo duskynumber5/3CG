@@ -7,68 +7,71 @@ function PlayClass:playRound()
     if game.state == GAME_STATE.BATTLE then
         endTurn = false
         
-        for _, column in ipairs(columns) do
-            for _, card in ipairs(column.cards) do
-                card.faceUp = false
-                card.grabbable = false
-            end
-        end
-        
         local tries = 0
         repeat
             ComputerClass:pickCards()
             tries = tries + 1
         until endTurn == true or tries > 10
 
-        for _, column in ipairs(computerColumns) do
-            for _, card in ipairs(column.cards) do
-                card.faceUp = false
-            end
-        end
-
         stagedCards = {}
 
         for i = 1, 3 do
             local playerCol = columns[i]
-            local aiCol = computerColumns[i]
+            local computerCol = computerColumns[i]
 
-            local playerPower, aiPower = 0, 0
+            local playerPower, computerPower = 0, 0
 
             for _, card in ipairs(playerCol.cards) do
                 playerPower = playerPower + card.POWER
             end
-            for _, card in ipairs(aiCol.cards) do
-                aiPower = aiPower + card.POWER
+            for _, card in ipairs(computerCol.cards) do
+                computerPower = computerPower + card.POWER
             end
 
             local flipFirst = "player"
-            if aiPower > playerPower then
-                flipFirst = "ai"
-            elseif aiPower == playerPower then
-                flipFirst = math.random(2) == 1 and "player" or "ai"
+            if computerPower > playerPower then
+                flipFirst = "computer"
+            elseif computerPower == playerPower then
+                flipFirst = math.random(2) == 1 and "player" or "computer"
             end
 
             if flipFirst == "player" then
                 for _, card in ipairs(playerCol.cards) do
-                    table.insert(stagedCards, card)
+                    if card.grabbable == true then
+                        table.insert(stagedCards, card)
+                        card.grabbable = false
+                    end
                 end
-                for _, card in ipairs(aiCol.cards) do
-                    table.insert(stagedCards, card)
+                for _, card in ipairs(computerCol.cards) do
+                    if card.faceUp == false then
+                        table.insert(stagedCards, card)
+                    end
                 end
             else
-                for _, card in ipairs(aiCol.cards) do
-                    table.insert(stagedCards, card)
+                for _, card in ipairs(computerCol.cards) do
+                    if card.faceUp == false then
+                        table.insert(stagedCards, card)
+                    end
                 end
                 for _, card in ipairs(playerCol.cards) do
-                    table.insert(stagedCards, card)
+                    if card.grabbable == true then
+                        table.insert(stagedCards, card)
+                        card.grabbable = false
+                    end
                 end
             end
         end
 
-        game.state = GAME_STATE.REVEALING
+        for _, card in ipairs(stagedCards) do
+            card.faceUp = false
+        end
+
         for _, card in ipairs(playerHand) do
             card.grabbable = false
         end
+
+        game.state = GAME_STATE.REVEALING
+
         currentStageIndex = 1
         revealFrameDelay = 30
         revealFrameCounter = 0
@@ -81,6 +84,20 @@ function PlayClass:update()
         revealFrameCounter = revealFrameCounter + 1
 
         if currentStageIndex > #stagedCards then
+            for i = 1, 3 do
+                for _, card in ipairs(columns[i].cards) do
+                    if card.ACTION_TIME == ON_TURN_END and card.ACTION_TIME ~= ON_REVEAL then
+                        currentCard = card
+                        CardValues[card.NAME].ability()
+                    end
+                end
+                for _, card in ipairs(computerColumns[i].cards) do
+                    if card.ACTION_TIME == ON_TURN_END and card.ACTION_TIME ~= ON_REVEAL then
+                        currentCard = card
+                        CardValues[card.NAME].ability()
+                    end
+                end
+            end
             game.state = GAME_STATE.SCORING
         end
 

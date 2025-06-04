@@ -86,39 +86,37 @@ CardValues = {
     Hercules = {
         type = ON_REVEAL,
         cost = 2,
-        power = 1,
+        power = 3,
         description = "When Revealed:\n\nDoubles its power if its\nthe strongest card here.",
         ability = function()
-            if currentCard.position.x > 500 then
-                if #columns[currentCard.column].cards > 1 then
-                    local strongest = true
-                    for _, card in ipairs(columns[currentCard.column].cards) do
-                        if card ~= currentCard and card.POWER >= currentCard.POWER then
-                            strongest = false
-                        end
+            if #columns[currentCard.column].cards == 1 and #computerColumns[currentCard.column].cards == 0 then
+                currentCard.POWER = currentCard.POWER * 2
+                return
+            end
+            if #columns[currentCard.column].cards == 0 and #computerColumns[currentCard.column].cards == 1 then
+                currentCard.POWER = currentCard.POWER * 2
+                return
+            end
+            
+            if #columns[currentCard.column].cards > 1 then
+                strongest = true
+                for _, card in ipairs(columns[currentCard.column].cards) do
+                    if card ~= currentCard and card.POWER >= currentCard.POWER then
+                        strongest = false
                     end
-
-                    if strongest == true then
-                        currentCard.POWER = currentCard.POWER * 2
-                    end
-                else
-                    currentCard.POWER = currentCard.POWER * 2
                 end
-            else
-                if #computerColumns[currentCard.column].cards > 1 then
-                    local computerStrongest = true
-                    for _, card in ipairs(computerColumns[currentCard.column].cards) do
-                        if card ~= currentCard and card.POWER >= currentCard.POWER then
-                            computerStrongest = false
-                        end
+            end
+            
+            if #computerColumns[currentCard.column].cards > 1 then
+                for _, card in ipairs(computerColumns[currentCard.column].cards) do
+                    if card ~= currentCard and card.POWER >= currentCard.POWER then
+                        strongest = false
                     end
-
-                    if computerStrongest == true then
-                        currentCard.POWER = currentCard.POWER * 2
-                    end
-                else
-                    currentCard.POWER = currentCard.POWER * 2
                 end
+            end
+
+            if strongest == true then
+                currentCard.POWER = currentCard.POWER * 2
             end
         end
     },
@@ -166,12 +164,13 @@ CardValues = {
 
                 for _, card in ipairs(discardCards) do
                     card:discard()
-                    currentStageIndex = currentStageIndex - 1
+                    if currentStageIndex ~= 1 then
+                        currentStageIndex = currentStageIndex - 1
+                    end
                 end
 
                 currentCard.index = 1
                 currentCard.position.y = col.y
-                currentCard.position.x = col.x - 13.5
             else
                 local col = computerColumns[currentCard.column]
                 if not col then return end
@@ -187,7 +186,9 @@ CardValues = {
 
                 for _, card in ipairs(computerDiscardCards) do
                     card:discard()
-                    currentStageIndex = currentStageIndex - 1
+                    if currentStageIndex ~= 1 then
+                        currentStageIndex = currentStageIndex - 1
+                    end
                 end
 
                 currentCard.index = 1

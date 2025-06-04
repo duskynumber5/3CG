@@ -118,25 +118,28 @@ function CardClass:draw()
     width = 64
     height = 64
     black = {0, 0, 0, 0.8}
+    transparentBlack = {0, 0, 0, 0.5}
     white = {1, 1, 1 ,1}
 
-    if self.state ~= CARD_STATE.IDLE and self.grabbable == true and self.faceUp == true and grabber.heldObject == nil then
-        love.graphics.setColor(0, 0, 0, 0.8) 
-        local offset = 18 * (self.state == CARD_STATE.GRABBED and 2 or 1)
-        love.graphics.rectangle("fill", self.position.x + offset, (self.position.y - 12) + offset, width + 10, height + 30, 6, 6)
-    end
+    if game.state ~= GAME_STATE.WIN then
+        if self.state ~= CARD_STATE.IDLE and self.grabbable == true and self.faceUp == true and grabber.heldObject == nil then
+            love.graphics.setColor(black) 
+            local offset = 18 * (self.state == CARD_STATE.GRABBED and 2 or 1)
+            love.graphics.rectangle("fill", self.position.x + offset, (self.position.y - 12) + offset, width + 10, height + 30, 6, 6)
+        end
 
-    if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil and playerHand[1] ~= self then
-        love.graphics.setColor(black) 
-        love.graphics.rectangle("fill", 1000 / 3, 120, 325, 300, 6, 6)
+        if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil and playerHand[1] ~= self then
+            love.graphics.setColor(black) 
+            love.graphics.rectangle("fill", 1000 / 3, 30, 325, 300, 6, 6)
 
-        love.graphics.setNewFont(40)
-        love.graphics.setColor(white) 
-        love.graphics.print(self.NAME, (1000 / 3) + 10, 130)
-        love.graphics.setNewFont(20)
-        love.graphics.print("Cost: " .. self.COST, (1000 / 3) + 10, 190)
-        love.graphics.print("Power: " .. self.POWER, (1000 / 3) + 10, 220)
-        love.graphics.print(self.DESCRIPTION, (1000 / 3) + 10, 270)
+            love.graphics.setNewFont(40)
+            love.graphics.setColor(white) 
+            love.graphics.print(self.NAME, (1000 / 3) + 10, 40)
+            love.graphics.setNewFont(20)
+            love.graphics.print("Cost: " .. self.COST, (1000 / 3) + 10, 90)
+            love.graphics.print("Power: " .. self.POWER, (1000 / 3) + 10, 120)
+            love.graphics.print(self.DESCRIPTION, (1000 / 3) + 10, 170)
+        end
     end
 
     love.graphics.setColor(white)
@@ -155,7 +158,13 @@ function CardClass:draw()
     love.graphics.draw(SPRITE_SHEET, self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
 
     --love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
-    love.graphics.print(tostring(self.column), self.position.x + 20, self.position.y - 30)
+    -- love.graphics.print(tostring(self.column), self.position.x + 20, self.position.y - 30)
+
+    if self.grabbable == false and playerHand[1] ~= self and self.position.y > 400 then
+        love.graphics.setColor(transparentBlack)
+        love.graphics.rectangle("fill", self.position.x + 15, self.position.y + 1, self.size.x - 5, self.size.y + 5, 6, 6)
+        love.graphics.setColor(white)
+    end
 end
 
 function CardClass:checkForMouseOver()
@@ -249,6 +258,12 @@ function CardClass:discard()
             table.remove(computerHand, i)
             table.insert(computerDiscardPile, card)
             break
+        end
+    end
+
+    for i, card in ipairs(stagedCards) do
+        if card == self then
+            table.remove(stagedCards, i)
         end
     end
 

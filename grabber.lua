@@ -112,7 +112,7 @@ function GrabberClass:release()
     end
 
     if self.stackCard and self.stackCard.index == 1 and 
-    self.heldObject.column ~= self.stackCard.column then
+    self.heldObject.column ~= self.stackCard.column  and self.state ~= CARD_STATE.GRABBED then
         if #columns[self.stackCard.column].cards < 4 then
 
             if self.heldObject.index == 1 then
@@ -192,15 +192,11 @@ function contains(table, card)
 end
 
 function shiftHand()
-    i = 2
-    for _, pos in ipairs(validPositions) do
-        if pos.x == grabber.heldObject.start.x + 13.5 and pos.y == grabber.heldObject.start.y then
-            for k = i, #playerHand, 1 do
-                playerHand[k].position.x = validPositions[k - 1].x - 13.5
-                playerHand[k].position.y = validPositions[k - 1].y
-            end
+    for i, card in ipairs(playerHand) do
+        if i ~= 1 then
+            card.position.x = validPositions[i - 1].x - 13.5
+            card.position.y = validPositions[i - 1].y
         end
-        i = i + 1
     end
 end
 

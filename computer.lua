@@ -66,6 +66,8 @@ function ComputerClass:pickCards()
 
                 computerColumns[index].power = computerColumns[index].power + card.POWER
                 computer.mana = computer.mana - card.COST
+
+                card.faceUp = false
             else
                 goto retry
             end
