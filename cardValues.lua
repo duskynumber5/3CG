@@ -50,16 +50,16 @@ CardValues = {
     Hades = {
         type = ON_REVEAL,
         cost = 4,
-        power = 1,
+        power = 4,
         description = "When Revealed:\n\nGain +2 power for each\ncard in your discard pile.",
         ability = function()
             if currentCard.position.x > 500 then
-                for _, card in ipairs(discardPile) do
-                    currentCard.POWER = currentCard.POWER + 1
+                for _, card in ipairs(discard) do
+                    currentCard.POWER = currentCard.POWER + 2
                 end
             else
                 for _, card in ipairs(computerDiscardPile) do
-                    currentCard.POWER = currentCard.POWER + 1
+                    currentCard.POWER = currentCard.POWER + 2
                 end
             end
         end
@@ -165,7 +165,7 @@ CardValues = {
                 for _, card in ipairs(discardCards) do
                     card:discard()
                     if currentStageIndex ~= 1 then
-                        currentStageIndex = currentStageIndex - 1
+                        currentStageIndex = currentStageIndex
                     end
                 end
 
@@ -187,7 +187,7 @@ CardValues = {
                 for _, card in ipairs(computerDiscardCards) do
                     card:discard()
                     if currentStageIndex ~= 1 then
-                        currentStageIndex = currentStageIndex - 1
+                        currentStageIndex = currentStageIndex
                     end
                 end
 

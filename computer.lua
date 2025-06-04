@@ -1,6 +1,3 @@
--- opponent will draw random cards from their pile each round
--- mana tracker
-
 ComputerClass = {}
 
 function ComputerClass:new()
@@ -64,7 +61,6 @@ function ComputerClass:pickCards()
 
                 card.column = index
 
-                computerColumns[index].power = computerColumns[index].power + card.POWER
                 computer.mana = computer.mana - card.COST
 
                 card.faceUp = false

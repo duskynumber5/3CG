@@ -86,13 +86,13 @@ function PlayClass:update()
         if currentStageIndex > #stagedCards then
             for i = 1, 3 do
                 for _, card in ipairs(columns[i].cards) do
-                    if card.ACTION_TIME == ON_TURN_END and card.ACTION_TIME ~= ON_REVEAL then
+                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.NAME ~= "Nyx" then
                         currentCard = card
                         CardValues[card.NAME].ability()
                     end
                 end
                 for _, card in ipairs(computerColumns[i].cards) do
-                    if card.ACTION_TIME == ON_TURN_END and card.ACTION_TIME ~= ON_REVEAL then
+                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.NAME ~= "Nyx" then
                         currentCard = card
                         CardValues[card.NAME].ability()
                     end
@@ -115,6 +115,20 @@ function PlayClass:update()
 
     -- award points
     if game.state == GAME_STATE.SCORING then
+
+        for _, col in ipairs(columns) do
+            col.power = 0
+            for _, card in ipairs(col.cards) do
+                col.power = col.power + card.POWER
+            end
+        end
+        for _, col in ipairs(computerColumns) do
+            col.power = 0
+            for _, card in ipairs(col.cards) do
+                col.power = col.power + card.POWER
+            end
+        end
+
         for i = 1, 3, 1 do
             local winner = compare(columns[i], computerColumns[i])
             if winner == "player" then

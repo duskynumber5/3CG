@@ -70,7 +70,6 @@ function CardClass:newCard(x, y, counter, grabbable)
     card.grabbable = grabbable
 
     card.column = nil
-    card.originalColumn = nil
     card.index = nil
 
     card.NAME = "name"
@@ -266,7 +265,8 @@ function CardClass:discard()
             table.remove(stagedCards, i)
         end
     end
-
+    
+    self.state = CARD_STATE.IDLE
     self.position.x = discardPile.x - 13.5
     self.position.y = discardPile.y
     self.faceUp = true
