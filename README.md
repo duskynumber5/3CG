@@ -56,4 +56,7 @@ Design wise I think I could rework my layout to make a little more sense for the
 
 A list of all assets (sprites, SFX, fonts, music, shaders, etc.) used in this project.
 
-Card Sprites: Maddison Lobo
+Sprites: I made all of the art
+Font: N/A
+Music: N/A
+SFX: N/A

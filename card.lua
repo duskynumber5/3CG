@@ -1,4 +1,3 @@
--- manages cards and their assets
 require "vector"
 require "cardValues"
 
@@ -156,9 +155,6 @@ function CardClass:draw()
     end
 
     love.graphics.draw(SPRITE_SHEET, self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
-
-    --love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
-    -- love.graphics.print(tostring(self.column), self.position.x + 20, self.position.y - 30)
 
     if self.grabbable == false and playerHand[1] ~= self and self.position.y > 400 then
         love.graphics.setColor(transparentBlack)
