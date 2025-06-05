@@ -140,30 +140,32 @@ function GameClass:update()
         game.state = GAME_STATE.WIN
     end
 
-    for i = #playerHand, 1, -1 do
-        local card = playerHand[i]
+    if game.state == GAME_STATE.PICK_CARDS then
+        for i = #playerHand, 1, -1 do
+            local card = playerHand[i]
 
-        if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
-            grabber:grab(card)
-        end
-    end
-
-    for _, card in ipairs(playerBoard) do
-        card:checkForMouseOver()
-        for i = #playerBoard, 1, -1 do
-        local card = playerBoard[i]
             if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
                 grabber:grab(card)
             end
         end
-    end
-    for _, column in ipairs(columns) do
-        for _, card in ipairs(column.cards) do
+
+        for _, card in ipairs(playerBoard) do
             card:checkForMouseOver()
-            for i = #column.cards, 1, -1 do
-            local card = column.cards[i]
+            for i = #playerBoard, 1, -1 do
+            local card = playerBoard[i]
                 if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
                     grabber:grab(card)
+                end
+            end
+        end
+        for _, column in ipairs(columns) do
+            for _, card in ipairs(column.cards) do
+                card:checkForMouseOver()
+                for i = #column.cards, 1, -1 do
+                local card = column.cards[i]
+                    if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
+                        grabber:grab(card)
+                    end
                 end
             end
         end

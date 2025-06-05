@@ -120,7 +120,7 @@ function CardClass:draw()
     transparentBlack = {0, 0, 0, 0.5}
     white = {1, 1, 1 ,1}
 
-    if game.state ~= GAME_STATE.WIN then
+    if game.state == GAME_STATE.PICK_CARDS then
         if self.state ~= CARD_STATE.IDLE and self.grabbable == true and self.faceUp == true and grabber.heldObject == nil then
             love.graphics.setColor(black) 
             local offset = 18 * (self.state == CARD_STATE.GRABBED and 2 or 1)
