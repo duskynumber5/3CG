@@ -146,14 +146,7 @@ function GameClass:update()
         if card.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabber.heldObject == nil and card.grabbable then
             grabber:grab(card)
         end
-
-        if card.position.x == drawPile.x - 13.5 and card.position.y == drawPile.y and card.state == CARD_STATE.MOUSE_OVER then
-            if love.mouse.isDown(1) and not mouseWasDown then
-                PlayerClass:draw1()
-            end
-        end
     end
-    mouseWasDown = love.mouse.isDown(1)
 
     for _, card in ipairs(playerBoard) do
         card:checkForMouseOver()
@@ -303,18 +296,6 @@ function GameClass:draw()
             love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
         end
     end
-
-
-    --debug
-    -- love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
-    -- love.graphics.print("computer Mana: " .. tostring(computer.mana), 200, 200)
-
-    -- local debugx = 400
-    -- local debugy = 100
-    -- for _, card in ipairs(computerHand) do
-    --     love.graphics.print("computer: " .. tostring(card), debugx, debugy)
-    --     debugy = debugy + 15
-    -- end
 end
 
 function checkForMouseMoving()
