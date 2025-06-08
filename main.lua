@@ -16,8 +16,6 @@ function love.load()
 
     GameClass:boardSetup()
 
-    GameClass:title()
-
     PlayerClass:hand()
     playerDeck = PlayerClass:deck()
     PlayerClass:board()
@@ -25,8 +23,6 @@ function love.load()
     ComputerClass:hand()
     computerDeck = ComputerClass:deck()
     ComputerClass:board()
-
-    GameClass:deal()
 end
 
 function love.update()
@@ -38,9 +34,19 @@ end
 
 function love.draw()
     GameClass:draw()
+
+    if game.state == GAME_STATE.title then
+        GameClass:titleDraw()
+    end
 end
 
 function love.keypressed(key)
+    if key == "f" and game.state == GAME_STATE.title then
+        game.state = GAME_STATE.PICK_CARDS
+
+        GameClass:deal()
+    end
+
     if key == "r" then
         love.load()
     end

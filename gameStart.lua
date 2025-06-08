@@ -24,7 +24,7 @@ love.window.setTitle("Frogora’s Box")
 math.randomseed(os.time())
 
 SPRITE_SHEET = love.graphics.newImage("assets/frogCards.png")
-TITLE = love.graphics.newImage("assets/frogTitle.png")
+TITLE_SCREEN = love.graphics.newImage("assets/frogTitle.png")
 
 IMAGE_W = 64
 IMAGE_H = 64
@@ -36,6 +36,7 @@ GAME_STATE = {
     SCORING = 3,
     MENU = 4,
     WIN = 5,
+    TITLE = 6,
 }
 
 function GameClass:new()
@@ -43,10 +44,14 @@ function GameClass:new()
     local metadata = {__index = GameClass}
     setmetatable(game, metadata)
 
-    game.state = nil
+    game.state = GAME_STATE.title
     game.round = 1
 
     return game
+end
+
+function GameClass:titleDraw()
+    love.graphics.draw(TITLE_SCREEN, 0, 0)
 end
 
 function GameClass:boardSetup()
@@ -57,8 +62,6 @@ function GameClass:boardSetup()
     discard = {}
     computerDiscardPile = {}
     stagedCards = {}
-
-    game.state = GAME_STATE.PICK_CARDS
 
     local w = IMAGE_W + 5
     local h = IMAGE_H + 32
