@@ -3,7 +3,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 1,
         power = 2,
-        description = "When Revealed:\n\nGain +1 mana next turn.",
+        description = "When Revealed:\nGain +1 mana next turn.",
         ability = function()
             if currentCard.position.x > 500 then 
                 player.extraMana = player.extraMana + 1
@@ -18,7 +18,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 3,
         power = 3,
-        description = "When Revealed:\n\nGain +2 power for each\nenemy card here.",
+        description = "When Revealed:\nGain +2 power for each\nenemy card here.",
         ability = function()
             if currentCard.position.x > 500 then
                 if #computerColumns[currentCard.column].cards > 0 then
@@ -40,7 +40,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 1,
         power = 1,
-        description = "When Revealed:\n\nBoth players draw\na card.",
+        description = "When Revealed:\nBoth players draw\na card.",
         ability = function()
             PlayerClass:draw1()
             ComputerClass:draw1()
@@ -51,7 +51,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 4,
         power = 4,
-        description = "When Revealed:\n\nGain +2 power for each\ncard in your discard pile.",
+        description = "When Revealed:\nGain +2 power for each\ncard in your discard pile.",
         ability = function()
             if currentCard.position.x > 500 then
                 for _, card in ipairs(discard) do
@@ -69,7 +69,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 2,
         power = 3,
-        description = "When Revealed:\n\nGive cards in your hand\n+1 power.",
+        description = "When Revealed:\nGive cards in your hand\n+1 power.",
         ability = function()
             if currentCard.position.x > 500 then
                 for _, card in ipairs(playerHand) do
@@ -87,7 +87,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 2,
         power = 3,
-        description = "When Revealed:\n\nDoubles its power if its\nthe strongest card here.",
+        description = "When Revealed:\nDoubles its power if its\nthe strongest card here.",
         ability = function()
             if #columns[currentCard.column].cards == 1 and #computerColumns[currentCard.column].cards == 0 then
                 currentCard.POWER = currentCard.POWER * 2
@@ -125,7 +125,7 @@ CardValues = {
         type =  ON_TURN_END,
         cost = 1,
         power = 1,
-        description = "End of Turn:\n\nGains +1 power, but is\ndiscarded when its power\nis greater than 7.",
+        description = "End of Turn:\nGains +1 power, but is\ndiscarded when its power\nis greater than 7.",
         ability = function()
             if currentCard.POWER < 7 then
                 currentCard.POWER = currentCard.POWER + 1
@@ -147,7 +147,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 3,
         power = 2,
-        description = "When Revealed:\n\nDiscards your other cards\nhere, add their power\nto this card.",
+        description = "When Revealed:\nDiscards your other cards\nhere, add their power\nto this card.",
         ability = function()
             if currentCard.position.x > 500 then
                 local col = columns[currentCard.column]
@@ -201,7 +201,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 2,
         power = 2,
-        description = "When Revealed:\n\nDiscard the lowest power\ncard in your hand.",
+        description = "When Revealed:\nDiscard the lowest power\ncard in your hand.",
         ability = function()
             if currentCard.position.x > 500 then
                 if playerHand[2] then
@@ -240,7 +240,7 @@ CardValues = {
         type = ON_REVEAL,
         cost = 4,
         power = 4,
-        description = "When Revealed:\n\nLower the power of each card\nin your opponent's hand by 1.",
+        description = "When Revealed:\nLower the power of each\ncard in your opponent's\nhand by 1.",
         ability = function()
             if currentCard.position.x > 500 then
                 for _, card in ipairs(computerHand) do

@@ -19,7 +19,7 @@ end
 function PlayerClass:deck()
     playerDeck = {}
 
-    if playerHand then
+    if #playerHand > 0 then
         drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, 1, false)
         table.insert(playerHand, drawTop)
 

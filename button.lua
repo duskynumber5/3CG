@@ -37,16 +37,17 @@ function button(text, funct, paramater, width, height)
             self.buttonY = buttonY or self.buttonY
 
             if textX then
-                self.textX = textX + self.buttonX
+                self.textX = textX + self.buttonX - 2
             end
 
             if textY then
-                self.textY = textY + self.buttonY - 7
+                self.textY = textY + self.buttonY
             end
 
             love.graphics.setColor(white)
 
-            love.graphics.rectangle("fill", self.buttonX, self.buttonY, self.width, self.height)
+            love.graphics.rectangle("fill", self.buttonX, self.buttonY + 10, self.width, self.height, 6, 6)
+
 
             love.graphics.setColor(black)
             love.graphics.print(self.text, self.textX, self.textY)

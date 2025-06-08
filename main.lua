@@ -16,6 +16,8 @@ function love.load()
 
     GameClass:boardSetup()
 
+    GameClass:title()
+
     PlayerClass:hand()
     playerDeck = PlayerClass:deck()
     PlayerClass:board()

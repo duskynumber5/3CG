@@ -43,8 +43,7 @@ Adjustments: I made the screen size smaller for now to decrease the dead space.
 
 ### POSTMORTEM
 
-A postmortem on what you did well and what you would do differently if you were to do this project over again 
-    (maybe some programming patterns that might have been a better fit?).
+A postmortem on what you did well and what you would do differently if you were to do this project over again (maybe some programming patterns that might have been a better fit?).
 
 Improving from the solitaire project, I was able to use a spritesheet for my assets as well as add some delay or "show" to the game play so it feels less one note. Ideally for the final version I can add animation or more are to improve this even more. I implemented a button element that was missing from my solitare game as well. 
 
@@ -57,6 +56,8 @@ Design wise I think I could rework my layout to make a little more sense for the
 A list of all assets (sprites, SFX, fonts, music, shaders, etc.) used in this project.
 
 Sprites: I made all of the art
-Font: N/A
+
+Font: https://www.dafont.com/greek-classics.font
+
 Music: N/A
 SFX: N/A

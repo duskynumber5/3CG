@@ -8,13 +8,23 @@ GameClass = {}
 
 love.window.setMode(1000, 700)
 
-brown = {0.70, 0.63, 0.34, 0}
-love.graphics.setBackgroundColor(brown)
+green = {0.40, 0.63, 0.34, 0}
+lightPurple = {0.40, 0.30, 0.50, 0}
+purple = {0.30, 0.20, 0.60, 0}
+darkPurple = {0.20, 0.0, 0.20, 0}
+red = {0.80, 0.20, 0.20, 0}
+grey = {0.40, 0.40, 0.34, 0}
+darkGreen = {0, 0.30, 0, 0}
+darkRed = {0.40, 0.0, 0.0, 0}
+color = {0.40, 0.0, 0.0, 0}
+
+love.graphics.setBackgroundColor(lightPurple)
 
 love.window.setTitle("Frogora’s Box")
 math.randomseed(os.time())
 
-SPRITE_SHEET = love.graphics.newImage("sprites/frogCards.png")
+SPRITE_SHEET = love.graphics.newImage("assets/frogCards.png")
+TITLE = love.graphics.newImage("assets/frogTitle.png")
 
 IMAGE_W = 64
 IMAGE_H = 64
@@ -54,7 +64,7 @@ function GameClass:boardSetup()
     local h = IMAGE_H + 32
 
     -- player hand
-    local x = 1000 / 2.84
+    local x = 500 - 144.5
     local y = 700 / 1.5
     for i = 1, 3, 1 do
         table.insert(validPositions, {
@@ -65,7 +75,7 @@ function GameClass:boardSetup()
         })
         x = x + (110)
     end
-    local x = 1000 / 3.38
+    local x = 500 - 199.5
     local y = 700 / 1.2
     for i = 1, 4, 1 do
         table.insert(validPositions, {
@@ -94,7 +104,7 @@ function GameClass:boardSetup()
     end
 
     -- draw pile
-    local x = (1000 / 3.2) + 110
+    local x = 500 - 79
     local y = 700 - ((IMAGE_H)*3.2 + (110 - IMAGE_H)*3.2)
     drawPile = {
         x = x, 
@@ -105,7 +115,7 @@ function GameClass:boardSetup()
     mouseWasDown = false
 
     -- discard pile
-    local x = (1000 / 3.5) + 220
+    local x = 500 + 10
     local y = 700 - ((IMAGE_H)*3.2 + (110 - IMAGE_H)*3.2)
     discardPile = {
         x = x, 
@@ -186,12 +196,12 @@ function GameClass:deal()
 end
 
 function GameClass:draw()
-    love.graphics.setNewFont(30)
+    love.graphics.setNewFont("assets/Greek_Classics.otf", 45)
 
     love.graphics.print("Round: " .. tostring(game.round), 0 + (2.6 * 30), 650)
 
     --scores
-    local scoresX = (1000 / 2.23)
+    local scoresX = 500 - 50
     love.graphics.print("Scores", scoresX, 10)
     love.graphics.print(tostring(player.score), scoresX + 90, 50)
     love.graphics.print(tostring(computer.score), scoresX - 10, 50)
@@ -199,11 +209,11 @@ function GameClass:draw()
     -- stats
     love.graphics.print("Mana: " .. tostring(player.mana), 1000 - (7 * 30), 650)
 
-    love.graphics.setNewFont(12)
+    love.graphics.setNewFont("assets/Greek_Classics.otf", 20)
 
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
-        endTurnButton:draw((1000 / 2.29), 700 / 2.5, 35, 20)
+        endTurnButton:draw(500 - 60, 700 / 2.5, 35, 20)
     end
 
     love.graphics.setColor(white)
@@ -245,7 +255,6 @@ function GameClass:draw()
     
     -- discard pile
     love.graphics.rectangle("line", discardPile.x, discardPile.y, discardPile.w, discardPile.h, 6 ,6)
-
     
     for _, card in ipairs(discard) do
         card:draw()
@@ -270,7 +279,7 @@ function GameClass:draw()
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     
         love.graphics.setColor(white)
-        love.graphics.setFont(love.graphics.newFont(40))
+        love.graphics.setNewFont("assets/Greek_Classics.otf", 100)
     
         if player.score > computer.score then
             local win = "YOU WIN!"

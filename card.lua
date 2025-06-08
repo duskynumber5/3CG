@@ -129,20 +129,20 @@ function CardClass:draw()
 
         if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil and playerHand[1] ~= self then
             love.graphics.setColor(black) 
-            love.graphics.rectangle("fill", 1000 / 3, 30, 325, 300, 6, 6)
+            love.graphics.rectangle("fill", 500 - 162.5, 30, 325, 300, 6, 6)
 
-            love.graphics.setNewFont(40)
+            love.graphics.setNewFont("assets/Greek_Classics.otf", 45)
             love.graphics.setColor(white) 
-            love.graphics.print(self.NAME, (1000 / 3) + 10, 40)
-            love.graphics.setNewFont(20)
-            love.graphics.print("Cost: " .. self.COST, (1000 / 3) + 10, 90)
-            love.graphics.print("Power: " .. self.POWER, (1000 / 3) + 10, 120)
-            love.graphics.print(self.DESCRIPTION, (1000 / 3) + 10, 170)
+            love.graphics.print(self.NAME, 500 - 162.5 + 10, 40)
+            love.graphics.setNewFont("assets/Greek_Classics.otf", 30)
+            love.graphics.print("Cost: " .. self.COST, 500 - 162.5 + 10, 90)
+            love.graphics.print("Power: " .. self.POWER, 500 - 162.5 + 10, 120)
+            love.graphics.print(self.DESCRIPTION, 500 - 162.5 + 10, 170)
         end
     end
 
     love.graphics.setColor(white)
-    love.graphics.setNewFont(12)
+    love.graphics.setNewFont("assets/Greek_Classics.otf", 20)
 
     if self.counter and cards[self.counter] then
         local cardFace = cards[self.counter]
