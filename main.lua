@@ -35,23 +35,34 @@ end
 function love.draw()
     GameClass:draw()
 
-    if game.state == GAME_STATE.title then
+    if game.state == GAME_STATE.TITLE then
         GameClass:titleDraw()
+    end
+
+    if game.state == GAME_STATE.MENU then
+        GameClass:menuDraw()
     end
 end
 
 function love.keypressed(key)
-    if key == "f" and game.state == GAME_STATE.title then
+    if key == "f" and game.state == GAME_STATE.TITLE then
         game.state = GAME_STATE.PICK_CARDS
 
         GameClass:deal()
     end
 
-    if key == "r" then
+    if key == "r" and game.state == GAME_STATE.WIN then
+        love.load()
+        game.state = GAME_STATE.PICK_CARDS
+        GameClass:deal()
+    end
+
+    if key == "m" and game.state == GAME_STATE.WIN then
         love.load()
     end
 
-    if key == "escape" then
-        love.event.quit()
+    if key == "escape" and game.state <= 3 then
+        game.prevState = game.state
+        game.state = GAME_STATE.MENU
     end
 end

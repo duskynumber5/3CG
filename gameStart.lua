@@ -44,14 +44,11 @@ function GameClass:new()
     local metadata = {__index = GameClass}
     setmetatable(game, metadata)
 
-    game.state = GAME_STATE.title
+    game.prevState = nil
+    game.state = GAME_STATE.TITLE
     game.round = 1
 
     return game
-end
-
-function GameClass:titleDraw()
-    love.graphics.draw(TITLE_SCREEN, 0, 0)
 end
 
 function GameClass:boardSetup()
@@ -115,7 +112,6 @@ function GameClass:boardSetup()
         w = w, 
         h = h
     }
-    mouseWasDown = false
 
     -- discard pile
     local x = 500 + 10
@@ -196,6 +192,27 @@ function GameClass:deal()
         table.insert(computerHand, computerDeck[1])
         table.remove(computerDeck, 1)
     end
+end
+
+function GameClass:titleDraw()
+    love.graphics.draw(TITLE_SCREEN, 0, 0)
+end
+
+function GameClass:menuDraw()
+    love.graphics.setColor(black) 
+    love.graphics.rectangle("fill", 0, 0, 1000, 700, 6, 6)
+
+    resumeButton = button("resume", resume, nil, 200, 50)
+    exitButton = button("exit", exit, nil, 200, 50)
+
+    resumeButton:draw(500 - 100, 350, 80, 20)
+    exitButton:draw(500 - 100, 450, 85, 20)
+
+    love.graphics.setColor(white) 
+    love.graphics.setNewFont("assets/Greek_Classics.otf", 100)
+
+    love.graphics.print("PAUSE", 500 - 100, 200)
+
 end
 
 function GameClass:draw()
@@ -287,6 +304,7 @@ function GameClass:draw()
         if player.score > computer.score then
             local win = "YOU WIN!"
             local reset = "Press R to Restart"
+            local menu = "Press M for Menu"
 
             local textWidth = love.graphics.getFont():getWidth(win)
             local textHeight = love.graphics.getFont():getHeight()
@@ -296,9 +314,11 @@ function GameClass:draw()
         
             love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2 - textHeight)
             love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
+            love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 150)
         else 
             local win = "YOU LOSE!"
             local reset = "Press R to Restart"
+            local menu = "Press M for Menu"
             
             local textWidth = love.graphics.getFont():getWidth(win)
             local textHeight = love.graphics.getFont():getHeight()
@@ -308,6 +328,7 @@ function GameClass:draw()
         
             love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2 - textHeight)
             love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
+            love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 150)
         end
     end
 end
@@ -328,8 +349,21 @@ function battle()
     PlayClass:playRound()
 end
 
+function resume()
+    game.state = game.prevState
+end
+
+function exit()
+    love.event.quit()
+end
+
 function love.mousepressed(x, y, button, istouch)
-    if button == 1 then
+    if button == 1 and game.state == GAME_STATE.MENU then
+        resumeButton:checkPressed(x, y)
+        exitButton:checkPressed(x, y)
+    end
+
+    if button == 1 and game.state == GAME_STATE.PICK_CARDS then
         endTurnButton:checkPressed(x, y)
     end
 end
