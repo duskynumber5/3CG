@@ -57,7 +57,7 @@ function ComputerClass:pickCards()
                 table.insert(computerColumns[index].cards, card)
                 table.remove(computerHand, i)
                 card.position.x = computerColumns[index].x - 13.5
-                card.position.y = computerColumns[index].y + (100 * (#computerColumns[index].cards - 1))
+                card.position.y = computerColumns[index].y + (110 * (#computerColumns[index].cards - 1))
 
                 card.column = index
 

@@ -156,10 +156,14 @@ function CardClass:draw()
 
     love.graphics.draw(SPRITE_SHEET, self.image, self.position.x, self.position.y, 0, 1.5, 1.5)
 
-    if self.grabbable == false and playerHand[1] ~= self and self.position.y > 400 then
+    if self.grabbable == false and playerHand[1] ~= self and self.position.y > 550 then
         love.graphics.setColor(transparentBlack)
         love.graphics.rectangle("fill", self.position.x + 15, self.position.y + 1, self.size.x - 5, self.size.y + 5, 6, 6)
         love.graphics.setColor(white)
+    end
+
+    if self.column ~= nil then
+        love.graphics.rectangle("line", self.position.x + 13.5, self.position.y, 69, 96, 6 ,6)
     end
 end
 

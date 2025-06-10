@@ -64,32 +64,21 @@ function GameClass:boardSetup()
     local h = IMAGE_H + 32
 
     -- player hand
-    local x = 500 - 144.5
-    local y = 700 / 1.5
-    for i = 1, 3, 1 do
+    local x = 500 - 272
+    local y = 700 - (96 + 10)
+    for i = 1, 7, 1 do
         table.insert(validPositions, {
             x = x,
             y = y,
             w = w,
             h = h
         })
-        x = x + (110)
-    end
-    local x = 500 - 199.5
-    local y = 700 / 1.2
-    for i = 1, 4, 1 do
-        table.insert(validPositions, {
-            x = x,
-            y = y,
-            w = w,
-            h = h
-        })
-        x = x + (110)
+        x = x + (80)
     end
 
     -- player card places
-    local x = 1000 - (IMAGE_W*3 + 110)
-    local y = 30
+    local x = 1000 - (IMAGE_W*3 + 42)
+    local y = 140
 
     for i = 1, 3, 1 do
         table.insert(columns, {
@@ -100,12 +89,12 @@ function GameClass:boardSetup()
                 cards = {},
                 power = 0
             })
-        x = x + (110)
+        x = x + (80)
     end
 
     -- draw pile
     local x = 500 - 79
-    local y = 700 - ((IMAGE_H)*3.2 + (110 - IMAGE_H)*3.2)
+    local y = 700 - ((IMAGE_H)*3.5)
     drawPile = {
         x = x, 
         y = y, 
@@ -115,7 +104,7 @@ function GameClass:boardSetup()
 
     -- discard pile
     local x = 500 + 10
-    local y = 700 - ((IMAGE_H)*3.2 + (110 - IMAGE_H)*3.2)
+    local y = 700 - ((IMAGE_H)*3.5)
     discardPile = {
         x = x, 
         y = y, 
@@ -123,9 +112,22 @@ function GameClass:boardSetup()
         h = h
     }
 
+    -- computer hand
+    local x = 500 - 272
+    local y = 10
+    for i = 1, 7, 1 do
+        table.insert(computerPositions, {
+            x = x,
+            y = y,
+            w = w,
+            h = h
+        })
+        x = x + (80)
+    end
+
     -- computer card places
-    local x = 10
-    local y = 30
+    local x = 5
+    local y = 140
     for i = 1, 3, 1 do
         table.insert(computerColumns, {
                 x = x,
@@ -135,7 +137,7 @@ function GameClass:boardSetup()
                 cards = {},
                 power = 0
             })
-        x = x + (110)
+        x = x + (80)
     end
 
     endTurnButton = button("end turn", battle, nil, 120, 40)
@@ -218,22 +220,27 @@ end
 function GameClass:draw()
     love.graphics.setNewFont("assets/Greek_Classics.otf", 45)
 
-    love.graphics.print("Round: " .. tostring(game.round), 0 + (2.6 * 30), 650)
+    love.graphics.print("Round: " .. tostring(game.round), (125 / 2) - 22.5, 650)
 
     --scores
     local scoresX = 500 - 50
-    love.graphics.print("Scores", scoresX, 10)
-    love.graphics.print(tostring(player.score), scoresX + 90, 50)
-    love.graphics.print(tostring(computer.score), scoresX - 10, 50)
+    local scoreY = 300
+    love.graphics.print("Scores", scoresX, scoreY)
+    love.graphics.print(tostring(player.score), scoresX + 130, scoreY)
+    if computer.score < 10 then
+        love.graphics.print(tostring(computer.score), scoresX - (50), scoreY)
+    else
+        love.graphics.print(tostring(computer.score), scoresX - (50 + 10), scoreY)
+    end
 
     -- stats
-    love.graphics.print("Mana: " .. tostring(player.mana), 1000 - (7 * 30), 650)
+    love.graphics.print("Mana: " .. tostring(player.mana), 875 - 45, 650)
 
     love.graphics.setNewFont("assets/Greek_Classics.otf", 20)
 
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
-        endTurnButton:draw(500 - 60, 700 / 2.5, 35, 20)
+        endTurnButton:draw(500 - 60, 410, 35, 20)
     end
 
     love.graphics.setColor(white)
@@ -268,6 +275,11 @@ function GameClass:draw()
         for _, card in ipairs(col.cards) do
             card:draw()
         end
+    end
+
+    -- draw computer hand
+    for _, position in ipairs(computerPositions) do
+        love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
     end
 
     -- draw pile

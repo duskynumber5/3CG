@@ -136,7 +136,7 @@ function GrabberClass:release()
             columns[self.stackCard.column].power = columns[self.stackCard.column].power + self.heldObject.POWER
 
             self.heldObject.position.x = self.stackCard.position.x
-            self.heldObject.position.y = self.stackCard.position.y + (100 * (#columns[self.stackCard.column].cards - 1))
+            self.heldObject.position.y = self.stackCard.position.y + (110 * (#columns[self.stackCard.column].cards - 1))
         end
     end
 
