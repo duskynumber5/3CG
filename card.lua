@@ -129,15 +129,15 @@ function CardClass:draw()
 
         if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil and playerHand[1] ~= self then
             love.graphics.setColor(black) 
-            love.graphics.rectangle("fill", 500 - 162.5, 30, 325, 300, 6, 6)
+            love.graphics.rectangle("fill", 500 - 162.5, 200, 325, 300, 6, 6)
 
             love.graphics.setNewFont("assets/Greek_Classics.otf", 45)
             love.graphics.setColor(white) 
-            love.graphics.print(self.NAME, 500 - 162.5 + 10, 40)
+            love.graphics.print(self.NAME, 500 - 162.5 + 10, 210)
             love.graphics.setNewFont("assets/Greek_Classics.otf", 30)
-            love.graphics.print("Cost: " .. self.COST, 500 - 162.5 + 10, 90)
-            love.graphics.print("Power: " .. self.POWER, 500 - 162.5 + 10, 120)
-            love.graphics.print(self.DESCRIPTION, 500 - 162.5 + 10, 170)
+            love.graphics.print("Cost: " .. self.COST, 500 - 162.5 + 10, 260)
+            love.graphics.print("Power: " .. self.POWER, 500 - 162.5 + 10, 290)
+            love.graphics.print(self.DESCRIPTION, 500 - 162.5 + 10, 340)
         end
     end
 
@@ -162,7 +162,7 @@ function CardClass:draw()
         love.graphics.setColor(white)
     end
 
-    if self.column ~= nil then
+    if self.column ~= nil and self.state ~= CARD_STATE.GRABBED then
         love.graphics.rectangle("line", self.position.x + 13.5, self.position.y, 69, 96, 6 ,6)
     end
 end
@@ -217,6 +217,9 @@ function CardClass:discard()
                     card.index = j
                 end
 
+                self.position.x = discardPile.x - 13.5
+                self.position.y = discardPile.y
+
                 break
             end
         end
@@ -234,6 +237,9 @@ function CardClass:discard()
                     card.index = j
                 end
 
+                self.position.x = computerDiscardPile.x - 13.5
+                self.position.y = computerDiscardPile.y
+
                 break
             end
         end
@@ -243,6 +249,9 @@ function CardClass:discard()
         if card == self then
             table.remove(playerHand, i)
             table.insert(discard, card)
+
+            self.position.x = discardPile.x - 13.5
+            self.position.y = discardPile.y
 
             for j = i, #playerHand do
                 playerHand[j].position.x = validPositions[j - 1].x - 13.5
@@ -257,6 +266,15 @@ function CardClass:discard()
         if card == self then
             table.remove(computerHand, i)
             table.insert(computerDiscardPile, card)
+
+            self.position.x = computerDiscardPile.x - 13.5
+            self.position.y = computerDiscardPile.y
+
+            for j = i, #computerHand do
+                computerHand[j].position.x = computerPositions[j].x - 13.5
+                computerHand[j].position.y = computerPositions[j].y
+            end
+
             break
         end
     end
@@ -268,8 +286,6 @@ function CardClass:discard()
     end
     
     self.state = CARD_STATE.IDLE
-    self.position.x = discardPile.x - 13.5
-    self.position.y = discardPile.y
     self.faceUp = true
     self.grabbable = false
 end

@@ -214,9 +214,9 @@ CardValues = {
                     lowest:discard()
                 end
             else
-                if computerHand[1] then
-                    local lowest = computerHand[1]
-                    for i = 1, #computerHand do
+                if computerHand[2] then
+                    local lowest = computerHand[2]
+                    for i = 2, #computerHand do
                         if lowest.POWER > computerHand[i].POWER then
                             lowest = computerHand[i]
                         end

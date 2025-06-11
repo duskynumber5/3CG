@@ -77,7 +77,7 @@ function GameClass:boardSetup()
     end
 
     -- player card places
-    local x = 1000 - (IMAGE_W*3 + 42)
+    local x = 1000 - (IMAGE_W*3 + 47)
     local y = 140
 
     for i = 1, 3, 1 do
@@ -102,6 +102,16 @@ function GameClass:boardSetup()
         h = h
     }
 
+    -- computer draw pile
+    local x = 500 + 10
+    local y = 130
+    computerDrawPile = {
+        x = x, 
+        y = y, 
+        w = w, 
+        h = h
+    }
+
     -- discard pile
     local x = 500 + 10
     local y = 700 - ((IMAGE_H)*3.5)
@@ -112,8 +122,18 @@ function GameClass:boardSetup()
         h = h
     }
 
+    -- computer discard pile
+    local x = 500 - 79
+    local y = 130
+    computerDiscardPile = {
+        x = x, 
+        y = y, 
+        w = w, 
+        h = h
+    }
+
     -- computer hand
-    local x = 500 - 272
+    local x = 500 + 207
     local y = 10
     for i = 1, 7, 1 do
         table.insert(computerPositions, {
@@ -122,11 +142,11 @@ function GameClass:boardSetup()
             w = w,
             h = h
         })
-        x = x + (80)
+        x = x - (80)
     end
 
     -- computer card places
-    local x = 5
+    local x = 10
     local y = 140
     for i = 1, 3, 1 do
         table.insert(computerColumns, {
@@ -191,6 +211,8 @@ function GameClass:deal()
         table.remove(playerDeck, 1)
     end
     for i = 1, 4, 1 do
+        computerDeck[1].position.x = computerPositions[#computerHand].x - 13.5
+        computerDeck[1].position.y = computerPositions[#computerHand].y
         table.insert(computerHand, computerDeck[1])
         table.remove(computerDeck, 1)
     end
@@ -284,12 +306,26 @@ function GameClass:draw()
 
     -- draw pile
     love.graphics.rectangle("line", drawPile.x, drawPile.y, drawPile.w, drawPile.h, 6 ,6)
+    love.graphics.rectangle("line", computerDrawPile.x, computerDrawPile.y, computerDrawPile.w, computerDrawPile.h, 6 ,6)
     
-    -- discard pile
+    -- discard piles
     love.graphics.rectangle("line", discardPile.x, discardPile.y, discardPile.w, discardPile.h, 6 ,6)
+    love.graphics.rectangle("line", computerDiscardPile.x, computerDiscardPile.y, computerDiscardPile.w, computerDiscardPile.h, 6 ,6)
     
     for _, card in ipairs(discard) do
         card:draw()
+    end
+    
+    for _, card in ipairs(computerDiscardPile) do
+        card:draw()
+    end
+
+    for i, card in ipairs(computerHand) do
+        if i == 1 and #computerDeck == 0 then
+            goto continue
+        end
+        card:draw()
+        ::continue::
     end
 
     for i, card in ipairs(playerHand) do

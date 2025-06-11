@@ -20,7 +20,7 @@ function PlayerClass:deck()
     playerDeck = {}
 
     if playerHand then
-        drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, 1, false)
+        local drawTop = CardClass:newCard(drawPile.x - 13.5, drawPile.y, 1, false)
         table.insert(playerHand, drawTop)
 
         local pool = {}
@@ -34,6 +34,7 @@ function PlayerClass:deck()
         for i = 1, 20 do
             local cardID = pool[i]
             local card = CardClass:newCard(0, 0, cardID, true)
+            card.owner = "player"
             table.insert(playerDeck, card)
         end
     end
