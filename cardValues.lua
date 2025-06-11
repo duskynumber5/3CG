@@ -135,7 +135,7 @@ CardValues = {
                 if not col then return end
 
                 for i, card in ipairs(col.cards) do
-                    card.position.y = col.y + (100 * (i - 1))
+                    card.position.y = col.y + (110 * (i - 1))
                     card.index = i
                 end
                 currentStageIndex = currentStageIndex - 1

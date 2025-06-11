@@ -37,7 +37,7 @@ function button(text, funct, paramater, width, height)
             self.buttonY = buttonY or self.buttonY
 
             if textX then
-                self.textX = textX + self.buttonX - 2
+                self.textX = textX + self.buttonX
             end
 
             if textY then
@@ -50,7 +50,10 @@ function button(text, funct, paramater, width, height)
 
 
             love.graphics.setColor(black)
+            love.graphics.setNewFont("assets/Greek_Classics.otf", 30)
             love.graphics.print(self.text, self.textX, self.textY)
+
+            love.graphics.setNewFont("assets/Greek_Classics.otf", 20)
         end
     }
 end

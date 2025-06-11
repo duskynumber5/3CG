@@ -227,15 +227,21 @@ function GameClass:menuDraw()
     love.graphics.rectangle("fill", 0, 0, 1000, 700, 6, 6)
 
     resumeButton = button("resume", resume, nil, 200, 50)
+    restartButton = button("restart", restart, nil, 200, 50)
+    menuButton = button("menu", menu, nil, 200, 50)
     exitButton = button("exit", exit, nil, 200, 50)
 
-    resumeButton:draw(500 - 100, 350, 80, 20)
-    exitButton:draw(500 - 100, 450, 85, 20)
+    resumeButton:draw(500 - 100, 300, 68, 20)
+    restartButton:draw(500 - 100, 375, 67, 20)
+    menuButton:draw(500 - 100, 450, 75, 20)
+    exitButton:draw(500 - 100, 525, 80, 20)
+
+    love.graphics.rectangle("fill", 0, 150, 1000, 100, 6, 6)
 
     love.graphics.setColor(white) 
     love.graphics.setNewFont("assets/Greek_Classics.otf", 100)
 
-    love.graphics.print("PAUSE", 500 - 100, 200)
+    love.graphics.print("PAUSE", 500 - 110, 150)
 
 end
 
@@ -262,7 +268,7 @@ function GameClass:draw()
 
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
-        endTurnButton:draw(500 - 60, 410, 35, 20)
+        endTurnButton:draw(500 - 60, 410, 17, 15)
     end
 
     love.graphics.setColor(white)
@@ -413,6 +419,16 @@ function resume()
     game.state = game.prevState
 end
 
+function restart()
+    love.load()
+    game.state = GAME_STATE.PICK_CARDS
+    GameClass:deal()
+end
+
+function menu()
+    love.load()
+end
+
 function exit()
     love.event.quit()
 end
@@ -420,6 +436,8 @@ end
 function love.mousepressed(x, y, button, istouch)
     if button == 1 and game.state == GAME_STATE.MENU then
         resumeButton:checkPressed(x, y)
+        restartButton:checkPressed(x, y)
+        menuButton:checkPressed(x, y)
         exitButton:checkPressed(x, y)
     end
 

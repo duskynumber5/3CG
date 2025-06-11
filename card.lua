@@ -214,7 +214,7 @@ function CardClass:discard()
                 table.insert(discard, card)
 
                 for j, card in ipairs(col.cards) do
-                    card.position.y = col.y + 100 * (j - 1)
+                    card.position.y = col.y + 110 * (j - 1)
                     card.index = j
                 end
 
