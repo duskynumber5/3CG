@@ -130,6 +130,7 @@ function CardClass:draw()
         if self.state == CARD_STATE.MOUSE_OVER and self.faceUp == true and grabber.heldObject == nil and playerHand[1] ~= self then
             love.graphics.setColor(black) 
             love.graphics.rectangle("fill", 500 - 162.5, 200, 325, 300, 6, 6)
+            love.graphics.rectangle("fill", 500 - 162.5, 200, 325, 300, 6, 6)
 
             love.graphics.setNewFont("assets/Greek_Classics.otf", 45)
             love.graphics.setColor(white) 

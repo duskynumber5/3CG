@@ -246,7 +246,7 @@ function GameClass:draw()
 
     --scores
     local scoresX = 500 - 50
-    local scoreY = 300
+    local scoreY = 322.5
     love.graphics.print("Scores", scoresX, scoreY)
     love.graphics.print(tostring(player.score), scoresX + 130, scoreY)
     if computer.score < 10 then
@@ -267,21 +267,60 @@ function GameClass:draw()
 
     love.graphics.setColor(white)
 
-    -- draw player board
+    -- draw hands
     for _, position in ipairs(validPositions) do
         love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
     end
+    for _, position in ipairs(computerPositions) do
+        love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
+    end
+
+    -- draw boards
     for _, column in ipairs(columns) do
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
     end
     
-    -- draw computer board
     for _, column in ipairs(computerColumns) do
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
     end
+
+    -- draw piles
+    love.graphics.rectangle("line", drawPile.x, drawPile.y, drawPile.w, drawPile.h, 6 ,6)
+    love.graphics.rectangle("line", computerDrawPile.x, computerDrawPile.y, computerDrawPile.w, computerDrawPile.h, 6 ,6)
     
+    -- discard piles
+    love.graphics.rectangle("line", discardPile.x, discardPile.y, discardPile.w, discardPile.h, 6 ,6)
+    love.graphics.rectangle("line", computerDiscardPile.x, computerDiscardPile.y, computerDiscardPile.w, computerDiscardPile.h, 6 ,6)
+
+    -- draw cards in discard piles
+    for _, card in ipairs(discard) do
+        card:draw()
+    end
+    
+    for _, card in ipairs(computerDiscardPile) do
+        card:draw()
+    end
+
+    -- draw cards in hands
+    for i, card in ipairs(computerHand) do
+        if i == 1 and #computerDeck == 0 then
+            goto continue
+        end
+        card:draw()
+        ::continue::
+    end
+
+    for i, card in ipairs(playerHand) do
+        if i == 1 and #playerDeck == 0 then
+            goto continue
+        end
+        card:draw()
+        ::continue::
+    end
+
+    -- draw cards in columns
     for _, col in ipairs(columns) do
         for _, card in ipairs(col.cards) do
             if card ~= grabber.heldObject then
@@ -299,43 +338,6 @@ function GameClass:draw()
         end
     end
 
-    -- draw computer hand
-    for _, position in ipairs(computerPositions) do
-        love.graphics.rectangle("line", position.x, position.y, position.w, position.h, 6 ,6)
-    end
-
-    -- draw pile
-    love.graphics.rectangle("line", drawPile.x, drawPile.y, drawPile.w, drawPile.h, 6 ,6)
-    love.graphics.rectangle("line", computerDrawPile.x, computerDrawPile.y, computerDrawPile.w, computerDrawPile.h, 6 ,6)
-    
-    -- discard piles
-    love.graphics.rectangle("line", discardPile.x, discardPile.y, discardPile.w, discardPile.h, 6 ,6)
-    love.graphics.rectangle("line", computerDiscardPile.x, computerDiscardPile.y, computerDiscardPile.w, computerDiscardPile.h, 6 ,6)
-    
-    for _, card in ipairs(discard) do
-        card:draw()
-    end
-    
-    for _, card in ipairs(computerDiscardPile) do
-        card:draw()
-    end
-
-    for i, card in ipairs(computerHand) do
-        if i == 1 and #computerDeck == 0 then
-            goto continue
-        end
-        card:draw()
-        ::continue::
-    end
-
-    for i, card in ipairs(playerHand) do
-        if i == 1 and #playerDeck == 0 then
-            goto continue
-        end
-        card:draw()
-        ::continue::
-    end
-
     -- win screen
     if game.state == GAME_STATE.WIN then
 
@@ -345,6 +347,9 @@ function GameClass:draw()
         
         love.graphics.setColor(black)
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+        love.graphics.setColor(black)
+        love.graphics.rectangle("fill", 0, love.graphics.getHeight() / 2 - 200, love.graphics.getWidth(), 350)
     
         love.graphics.setColor(white)
         love.graphics.setNewFont("assets/Greek_Classics.otf", 100)
@@ -360,9 +365,12 @@ function GameClass:draw()
             local screenWidth = love.graphics.getWidth()
             local screenHeight = love.graphics.getHeight()
         
-            love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2 - textHeight)
-            love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
-            love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 150)
+            love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2.6 - textHeight)
+
+            love.graphics.setNewFont("assets/Greek_Classics.otf", 50)
+
+            love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2.6 + 60)
+            love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(menu)) / 2, screenHeight / 2.6 + 150)
         else 
             local win = "YOU LOSE!"
             local reset = "Press R to Restart"
@@ -373,10 +381,14 @@ function GameClass:draw()
 
             local screenWidth = love.graphics.getWidth()
             local screenHeight = love.graphics.getHeight()
-        
-            love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2 - textHeight)
-            love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 20)
-            love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2 + 150)
+
+            
+            love.graphics.print(win, (screenWidth - textWidth) / 2, screenHeight / 2.6 - textHeight)
+
+            love.graphics.setNewFont("assets/Greek_Classics.otf", 50)
+
+            love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2.6 + 60)
+            love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(menu)) / 2, screenHeight / 2.6 + 150)
         end
     end
 end
