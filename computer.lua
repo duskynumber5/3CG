@@ -67,7 +67,6 @@ function ComputerClass:pickCards()
             index = math.random(3)
             if #computerColumns[index].cards < 4 then
                 table.insert(computerColumns[index].cards, card)
-                table.remove(computerHand, i)
                 card.position.x = computerColumns[index].x - 13.5
                 card.position.y = computerColumns[index].y + (110 * (#computerColumns[index].cards - 1))
 
@@ -77,6 +76,7 @@ function ComputerClass:pickCards()
                 computer.mana = computer.mana - card.COST
 
                 card.faceUp = false
+                table.remove(computerHand, i)
             else
                 goto retry
             end

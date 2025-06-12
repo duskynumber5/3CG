@@ -83,33 +83,20 @@ function PlayClass:update()
     if game.state == GAME_STATE.REVEALING then
         revealFrameCounter = revealFrameCounter + 1
 
-        if currentStageIndex > #stagedCards then
-            for i = 1, 3 do
-                for _, card in ipairs(columns[i].cards) do
-                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.ACTION_TIME ~= ON_REVEAL then
-                        currentCard = card
-                        CardValues[card.NAME].ability()
-                    end
-                end
-                for _, card in ipairs(computerColumns[i].cards) do
-                    if card.ACTION_TIME == ON_TURN_END and not contains(stagedCards, card) and card.ACTION_TIME ~= ON_REVEAL then
-                        currentCard = card
-                        CardValues[card.NAME].ability()
-                    end
-                end
-            end
-            game.state = GAME_STATE.SCORING
-        end
-
         if revealFrameCounter >= revealFrameDelay and currentStageIndex <= #stagedCards then
             local card = stagedCards[currentStageIndex]
             card.faceUp = true
-            if card.ACTION_TIME == ON_REVEAL then
+            if card.ACTION_TIME == "ON_REVEAL" then
                 currentCard = card
                 CardValues[card.NAME].ability(currentCard)
             end 
             currentStageIndex = currentStageIndex + 1
             revealFrameCounter = 0
+        end
+
+        if currentStageIndex > #stagedCards then
+            endOfTurnAbilities()
+            game.state = GAME_STATE.SCORING
         end
     end
 
@@ -198,5 +185,23 @@ function compare(playerCol, computerCol)
 
     if playerCol.power == computerCol.power then
         return "tie"
+    end
+end
+
+function endOfTurnAbilities()
+    for i = 1, 3 do
+        for _, card in ipairs(columns[i].cards) do
+            if card.ACTION_TIME == "ON_TURN_END" then
+                CardValues[card.NAME].ability(card)
+            end
+        end
+    end
+
+    for i = 1, 3 do
+        for _, card in ipairs(computerColumns[i].cards) do
+            if card.ACTION_TIME == "ON_TURN_END" then
+                CardValues[card.NAME].ability(card)
+            end
+        end
     end
 end

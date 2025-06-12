@@ -1,6 +1,6 @@
 CardValues = {
     Apollo = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 1,
         power = 2,
         description = "When Revealed:\nGain +1 mana next turn.",
@@ -15,7 +15,7 @@ CardValues = {
     },
 
     Ares = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 3,
         power = 3,
         description = "When Revealed:\nGain +2 power for each\nenemy card here.",
@@ -37,7 +37,7 @@ CardValues = {
     },
 
     Demeter = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 1,
         power = 1,
         description = "When Revealed:\nBoth players draw\na card.",
@@ -48,7 +48,7 @@ CardValues = {
     },
 
     Hades = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 4,
         power = 4,
         description = "When Revealed:\nGain +2 power for each\ncard in your discard pile.",
@@ -66,7 +66,7 @@ CardValues = {
     },
 
     Hera = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 2,
         power = 3,
         description = "When Revealed:\nGive cards in your hand\n+1 power.",
@@ -84,49 +84,49 @@ CardValues = {
     },
 
     Hercules = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 2,
         power = 3,
         description = "When Revealed:\nDoubles its power if its\nthe strongest card here.",
         ability = function()
-            if #columns[currentCard.column].cards == 1 and #computerColumns[currentCard.column].cards == 0 then
-                currentCard.POWER = currentCard.POWER * 2
-                return
-            end
-            if #columns[currentCard.column].cards == 0 and #computerColumns[currentCard.column].cards == 1 then
-                currentCard.POWER = currentCard.POWER * 2
-                return
-            end
-            
-            if #columns[currentCard.column].cards > 1 then
-                strongest = true
+            local allCards = {}
+
+            if currentCard.position.x > 500 then
                 for _, card in ipairs(columns[currentCard.column].cards) do
-                    if card ~= currentCard and card.POWER >= currentCard.POWER then
-                        strongest = false
-                    end
+                    table.insert(allCards, card)
                 end
-            end
-            
-            if #computerColumns[currentCard.column].cards > 1 then
                 for _, card in ipairs(computerColumns[currentCard.column].cards) do
-                    if card ~= currentCard and card.POWER >= currentCard.POWER then
-                        strongest = false
-                    end
+                    table.insert(allCards, card)
+                end
+            else
+                for _, card in ipairs(computerColumns[currentCard.column].cards) do
+                    table.insert(allCards, card)
+                end
+                for _, card in ipairs(columns[currentCard.column].cards) do
+                    table.insert(allCards, card)
                 end
             end
 
-            if strongest == true then
+            local strongest = true
+            for _, card in ipairs(allCards) do
+                if card ~= currentCard and card.POWER >= currentCard.POWER then
+                    strongest = false
+                    break
+                end
+            end
+
+            if strongest then
                 currentCard.POWER = currentCard.POWER * 2
             end
         end
     },
 
     Icarus = {
-        type =  ON_TURN_END,
+        type =  "ON_TURN_END",
         cost = 1,
         power = 1,
         description = "End of Turn:\nGains +1 power, but is\ndiscarded when its power\nis greater than 7.",
-        ability = function()
+        ability = function(currentCard)
             if currentCard.POWER < 7 then
                 currentCard.POWER = currentCard.POWER + 1
             else
@@ -144,7 +144,7 @@ CardValues = {
     },
 
     Nyx = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 3,
         power = 2,
         description = "When Revealed:\nDiscards your other cards\nhere, add their power\nto this card.",
@@ -198,7 +198,7 @@ CardValues = {
     },
 
     Persephone = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 2,
         power = 2,
         description = "When Revealed:\nDiscard the lowest power\ncard in your hand.",
@@ -237,7 +237,7 @@ CardValues = {
     },
 
     Zeus = {
-        type = ON_REVEAL,
+        type = "ON_REVEAL",
         cost = 4,
         power = 4,
         description = "When Revealed:\nLower the power of each\ncard in your opponent's\nhand by 1.",

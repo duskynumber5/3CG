@@ -272,17 +272,11 @@ function CardClass:discard()
             self.position.y = computerDiscardPile.y
 
             for j = i, #computerHand do
-                computerHand[j].position.x = computerPositions[j].x - 13.5
-                computerHand[j].position.y = computerPositions[j].y
+                computerHand[j].position.x = computerPositions[j - 1].x - 13.5
+                computerHand[j].position.y = computerPositions[j - 1].y
             end
 
             break
-        end
-    end
-
-    for i, card in ipairs(stagedCards) do
-        if card == self then
-            table.remove(stagedCards, i)
         end
     end
     
