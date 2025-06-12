@@ -141,6 +141,7 @@ function GrabberClass:release()
     end
 
     if isValidReleasePosition == false then
+        sounds.badPlace:play()
         self.heldObject.position.x = self.heldObject.start.x
         self.heldObject.position.y = self.heldObject.start.y
         if self.heldObject.column ~= nil then
