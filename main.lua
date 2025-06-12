@@ -46,22 +46,32 @@ end
 
 function love.keypressed(key)
     if key == "f" and game.state == GAME_STATE.TITLE then
+        sounds.title:stop()
         game.state = GAME_STATE.PICK_CARDS
+        sounds.select:play()
 
         GameClass:deal()
+
+        sounds.background:setLooping(true)
+        sounds.background:play()
     end
 
     if key == "r" and game.state == GAME_STATE.WIN then
         love.load()
+        sounds.select:play()
+        sounds.background:play()
         game.state = GAME_STATE.PICK_CARDS
         GameClass:deal()
     end
 
     if key == "m" and game.state == GAME_STATE.WIN then
+        sounds.select:play()
         love.load()
     end
 
     if key == "escape" and game.state <= 3 then
+        sounds.background:pause()
+        sounds.select:play()
         game.prevState = game.state
         game.state = GAME_STATE.MENU
     end

@@ -146,6 +146,8 @@ function GrabberClass:release()
         if self.heldObject.column ~= nil then
             table.insert(columns[self.heldObject.column].cards, self.heldObject)
         end
+    else
+        sounds.place:play()
     end
 
     self.heldObject.state = 0

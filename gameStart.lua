@@ -6,6 +6,21 @@ require "playRound"
 
 GameClass = {}
 
+sounds = {}
+
+sounds.title = love.audio.newSource("assets/sounds/title.mp3", "stream")
+sounds.title:setVolume(0.1)
+sounds.background = love.audio.newSource("assets/sounds/background.mp3", "stream")
+sounds.background:setVolume(0.1)
+sounds.win = love.audio.newSource("assets/sounds/win.mp3", "stream")
+sounds.win:setVolume(0.1)
+sounds.select = love.audio.newSource("assets/sounds/select.wav", "static")
+sounds.select:setVolume(0.02)
+sounds.place = love.audio.newSource("assets/sounds/place.wav", "static")
+sounds.place:setVolume(0.02)
+sounds.lose = love.audio.newSource("assets/sounds/lose.wav", "static")
+sounds.lose:setVolume(0.02)
+
 love.window.setMode(1000, 700)
 
 green = {0.40, 0.63, 0.34, 0}
@@ -167,8 +182,16 @@ function GameClass:update()
     checkForMouseMoving()
 
     -- win state
-    if player.score >= 25 or computer.score >= 25 then
-        game.state = GAME_STATE.WIN
+    if computer.score >= 25 or player.score >= 25 then
+        if player.score < computer.score then
+            sounds.background:stop()
+            game.state = GAME_STATE.WIN
+            sounds.lose:play()
+        else
+            sounds.background:stop()
+            game.state = GAME_STATE.WIN
+            sounds.win:play()
+        end
     end
 
     if game.state == GAME_STATE.PICK_CARDS then
@@ -219,6 +242,8 @@ function GameClass:deal()
 end
 
 function GameClass:titleDraw()
+    sounds.title:setLooping(true)
+    sounds.title:play()
     love.graphics.draw(TITLE_SCREEN, 0, 0)
 end
 
@@ -346,7 +371,6 @@ function GameClass:draw()
 
     -- win screen
     if game.state == GAME_STATE.WIN then
-
         for _, card in ipairs(playerHand) do
             card.grabbable = nil
         end
@@ -361,6 +385,8 @@ function GameClass:draw()
         love.graphics.setNewFont("assets/Greek_Classics.otf", 100)
     
         if player.score > computer.score then
+            player.score = 1
+            computer.score = 0
             local win = "YOU WIN!"
             local reset = "Press R to Restart"
             local menu = "Press M for Menu"
@@ -377,7 +403,9 @@ function GameClass:draw()
 
             love.graphics.print(reset, (screenWidth - love.graphics.getFont():getWidth(reset)) / 2, screenHeight / 2.6 + 60)
             love.graphics.print(menu, (screenWidth - love.graphics.getFont():getWidth(menu)) / 2, screenHeight / 2.6 + 150)
-        else 
+        elseif player.score < computer.score then 
+            player.score = 0
+            computer.score = 1
             local win = "YOU LOSE!"
             local reset = "Press R to Restart"
             local menu = "Press M for Menu"
@@ -416,17 +444,24 @@ function battle()
 end
 
 function resume()
+    sounds.select:play()
+    sounds.background:play()
     game.state = game.prevState
 end
 
 function restart()
+    sounds.select:play()
+    sounds.background:stop()
     love.load()
+    sounds.background:play()
     game.state = GAME_STATE.PICK_CARDS
     GameClass:deal()
 end
 
 function menu()
+    sounds.select:play()
     love.load()
+    sounds.background:stop()
 end
 
 function exit()

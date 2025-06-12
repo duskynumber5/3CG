@@ -55,9 +55,23 @@ Design wise I think I could rework my layout to make a little more sense for the
 
 A list of all assets (sprites, SFX, fonts, music, shaders, etc.) used in this project.
 
-Sprites: I made all of the art
+SPRITES 
+    I made all of the art
 
-Font: https://www.dafont.com/greek-classics.font
+FONT
+    https://www.dafont.com/greek-classics.font
 
-Music: N/A
-SFX: N/A
+MUSIC
+
+Title: "Adventure Meme" Kevin MacLeod (incompetech.com)
+        Licensed under Creative Commons: By Attribution 4.0 License
+        http://creativecommons.org/licenses/by/4.0/
+Background: "Thinking Music" Kevin MacLeod (incompetech.com)
+             Licensed under Creative Commons: By Attribution 4.0 License
+             http://creativecommons.org/licenses/by/4.0/
+Win: "Loping Sting" Kevin MacLeod (incompetech.com)
+      Licensed under Creative Commons: By Attribution 4.0 License
+      http://creativecommons.org/licenses/by/4.0/
+
+SFX
+    I made them using JFXR
