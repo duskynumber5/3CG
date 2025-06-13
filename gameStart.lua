@@ -9,19 +9,19 @@ GameClass = {}
 sounds = {}
 
 sounds.title = love.audio.newSource("assets/sounds/title.mp3", "stream")
-sounds.title:setVolume(0.1)
+sounds.title:setVolume(0.2)
 sounds.background = love.audio.newSource("assets/sounds/background.mp3", "stream")
-sounds.background:setVolume(0.1)
+sounds.background:setVolume(0.6)
 sounds.win = love.audio.newSource("assets/sounds/win.mp3", "stream")
-sounds.win:setVolume(0.1)
+sounds.win:setVolume(0.3)
 sounds.select = love.audio.newSource("assets/sounds/select.wav", "static")
 sounds.select:setVolume(0.05)
 sounds.place = love.audio.newSource("assets/sounds/place.wav", "static")
-sounds.place:setVolume(0.05)
+sounds.place:setVolume(0.1)
 sounds.badPlace = love.audio.newSource("assets/sounds/badPlace.wav", "static")
-sounds.badPlace:setVolume(0.05)
+sounds.badPlace:setVolume(0.1)
 sounds.lose = love.audio.newSource("assets/sounds/lose.wav", "static")
-sounds.lose:setVolume(0.05)
+sounds.lose:setVolume(0.3)
 
 love.window.setMode(1000, 700)
 
@@ -94,7 +94,7 @@ function GameClass:boardSetup()
     end
 
     -- player card places
-    local x = 1000 - (IMAGE_W*3 + 47)
+    local x = 1000 - (IMAGE_W*3 + 47 + 30)
     local y = 140
 
     for i = 1, 3, 1 do
@@ -163,7 +163,7 @@ function GameClass:boardSetup()
     end
 
     -- computer card places
-    local x = 10
+    local x = 30
     local y = 140
     for i = 1, 3, 1 do
         table.insert(computerColumns, {
@@ -276,7 +276,8 @@ function GameClass:draw()
     love.graphics.setNewFont("assets/Greek_Classics.otf", 45)
 
     love.graphics.print("Round: " .. tostring(game.round), (125 / 2) - 22.5, 650)
-
+    
+    love.graphics.setColor(white)
     --scores
     local scoresX = 500 - 50
     local scoreY = 322.5
@@ -440,6 +441,7 @@ function checkForMouseMoving()
 end
 
 function battle()
+    sounds.select:play()
     game.state = GAME_STATE.BATTLE
 
     PlayClass:playRound()

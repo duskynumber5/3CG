@@ -57,8 +57,8 @@ function love.keypressed(key)
     end
 
     if key == "r" and game.state == GAME_STATE.WIN then
+        sounds.win:stop()
         love.load()
-        sounds.select:play()
         sounds.background:play()
         game.state = GAME_STATE.PICK_CARDS
         GameClass:deal()

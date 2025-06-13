@@ -14,7 +14,7 @@ function CardClass:loadCards()
     cardHeight = 64
     quads = {}
 
-    local sheetCols = 6
+    local sheetCols = 7
     local sheetRows = 2
 
     for row = 0, sheetRows - 1 do
@@ -40,6 +40,7 @@ function CardClass:loadCards()
         "Hera",
         "Hercules",
         "Icarus",
+        "Midas",
         "Nyx",
         "Persephone",
         "WoodenCow",
@@ -47,7 +48,7 @@ function CardClass:loadCards()
     }
 
 
-    for j=1, 12 do
+    for j=1, 13 do
         local card = {
             name = names[j],
             image = quads[j],

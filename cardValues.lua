@@ -143,6 +143,21 @@ CardValues = {
         end
     },
 
+    Midas = {
+        type = "ON_REVEAL",
+        cost = 3,
+        power = 3,
+        description = "When Revealed:\nSet ALL cards here to\n3 power.",
+        ability = function()
+            for i, card in ipairs(columns[currentCard.column].cards) do
+                card.POWER = 3
+            end
+            for i, card in ipairs(computerColumns[currentCard.column].cards) do
+                card.POWER = 3
+            end
+        end
+    },
+
     Nyx = {
         type = "ON_REVEAL",
         cost = 3,
@@ -228,7 +243,7 @@ CardValues = {
     },
 
     WoodenCow = {
-        type = VANILLA,
+        type = "VANILLA",
         cost = 1,
         power = 1,
         description = "ribbi- i mean moo",
