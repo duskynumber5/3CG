@@ -28,12 +28,12 @@ love.window.setMode(1000, 700)
 green = {0.40, 0.63, 0.34, 0}
 lightPurple = {0.40, 0.30, 0.50, 0}
 purple = {0.30, 0.20, 0.60, 0}
-darkPurple = {0.20, 0.0, 0.20, 0}
+darkPurple = {0.20, 0.0, 0.20, 0.2}
 red = {0.80, 0.20, 0.20, 0}
 grey = {0.40, 0.40, 0.34, 0}
-darkGreen = {0, 0.30, 0, 0}
+darkGreen = {0, 0.30, 0, 0.5}
 darkRed = {0.40, 0.0, 0.0, 0}
-color = {0.40, 0.0, 0.0, 0}
+color = {0.40, 0.0, 0.0, 0.2}
 
 love.graphics.setBackgroundColor(lightPurple)
 
@@ -177,7 +177,8 @@ function GameClass:boardSetup()
         x = x + (80)
     end
 
-    endTurnButton = button("end turn", battle, nil, 120, 40)
+    endTurnButton = button("end turn", endTurn, nil, 120, 40)
+    undoButton = button("undo all", undo, nil, 120, 40)
 end
 
 function GameClass:update()
@@ -277,7 +278,6 @@ function GameClass:draw()
 
     love.graphics.print("Round: " .. tostring(game.round), (125 / 2) - 22.5, 650)
     
-    love.graphics.setColor(white)
     --scores
     local scoresX = 500 - 50
     local scoreY = 322.5
@@ -297,6 +297,7 @@ function GameClass:draw()
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
         endTurnButton:draw(500 - 60, 410, 17, 15)
+        undoButton:draw(830, 580, 17, 15)
     end
 
     love.graphics.setColor(white)
@@ -313,6 +314,13 @@ function GameClass:draw()
     for _, column in ipairs(columns) do
         love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
         love.graphics.print(tostring(column.power), column.x, column.y - 20)
+
+        if #column.cards < 4 and grabber.heldObject ~= nil then
+            love.graphics.setColor(darkGreen)
+            love.graphics.rectangle("fill", column.x, column.y, column.w, column.h, 6 ,6)
+            love.graphics.rectangle("line", column.x, column.y, column.w, column.h, 6 ,6)
+            love.graphics.setColor(white)
+        end
     end
     
     for _, column in ipairs(computerColumns) do
@@ -440,11 +448,36 @@ function checkForMouseMoving()
     end
 end
 
-function battle()
+function endTurn()
     sounds.select:play()
+    grabber.placedCards = {}
     game.state = GAME_STATE.BATTLE
 
     PlayClass:playRound()
+end
+
+function undo()
+    sounds.select:play()
+
+    for i = #grabber.placedCards, 1, -1 do
+        local card = grabber.placedCards[i]
+
+        if card.start then
+            card.position.x = validPositions[#playerHand].x - 13.5
+            card.position.y = validPositions[#playerHand].y
+        end
+
+        table.insert(playerHand, card)
+        table.remove(columns[card.column].cards, card.index)
+        table.remove(grabber.placedCards, i)
+
+        columns[card.column].power = columns[card.column].power - card.POWER
+
+        player.mana = player.mana + card.COST
+
+        card.column = nil
+        card.index = nil
+    end
 end
 
 function resume()
@@ -482,5 +515,6 @@ function love.mousepressed(x, y, button, istouch)
 
     if button == 1 and game.state == GAME_STATE.PICK_CARDS then
         endTurnButton:checkPressed(x, y)
+        undoButton:checkPressed(x, y)
     end
 end

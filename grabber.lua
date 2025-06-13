@@ -13,6 +13,8 @@ function GrabberClass:new()
 
     grabber.stackCard = nil
 
+    grabber.placedCards = {}
+
     return grabber
 end
 
@@ -78,6 +80,9 @@ function GrabberClass:release()
         ::oops::
         self.stackCard = nil
         isValidReleasePosition = true
+        if self.heldObject.column == nil then
+            table.insert(self.placedCards, self.heldObject)
+        end
 
         for j = #playerHand, 1, -1 do
             if playerHand[j] == self.heldObject then
@@ -123,6 +128,9 @@ function GrabberClass:release()
             shiftColumn(self.heldObject.column)
 
             isValidReleasePosition = true   
+            if self.heldObject.column == nil then
+                table.insert(self.placedCards, self.heldObject)
+            end
 
             if contains(playerHand, self.heldObject) then
                 table.remove(playerHand, #playerHand)

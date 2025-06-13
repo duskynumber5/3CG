@@ -164,7 +164,7 @@ function CardClass:draw()
         love.graphics.setColor(white)
     end
 
-    if self.column ~= nil and self.state ~= CARD_STATE.GRABBED then
+    if self.column ~= nil and self.state ~= CARD_STATE.GRABBED and self.index ~= 1 then
         love.graphics.rectangle("line", self.position.x + 13.5, self.position.y, 69, 96, 6 ,6)
     end
 end
