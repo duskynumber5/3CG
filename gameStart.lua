@@ -178,7 +178,7 @@ function GameClass:boardSetup()
     end
 
     endTurnButton = button("end turn", endTurn, nil, 120, 40)
-    undoButton = button("undo all", undo, nil, 120, 40)
+    undoButton = button("undo placed", undo, nil, 140, 40)
 end
 
 function GameClass:update()
@@ -297,7 +297,7 @@ function GameClass:draw()
     -- draw button
     if game.state == GAME_STATE.PICK_CARDS then
         endTurnButton:draw(500 - 60, 410, 17, 15)
-        undoButton:draw(830, 580, 17, 15)
+        undoButton:draw(817, 580, 10, 15)
     end
 
     love.graphics.setColor(white)
