@@ -83,12 +83,12 @@ function ComputerClass:pickCards()
         end
         
         if i == #computerHand then
-            endTurn = true
+            computerFinishedTurn = true
         end
     end
 
     if computer.mana == 0 then
-        endTurn = true
+        computerFinishedTurn = true
     end
 
     for i, card in ipairs(computerHand) do

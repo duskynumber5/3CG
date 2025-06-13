@@ -5,13 +5,13 @@ PlayClass = {}
 
 function PlayClass:playRound()
     if game.state == GAME_STATE.BATTLE then
-        endTurn = false
+        computerFinishedTurn = false
         
         local tries = 0
         repeat
             ComputerClass:pickCards()
             tries = tries + 1
-        until endTurn == true or tries > 10
+        until computerFinishedTurn == true or tries > 10
 
         stagedCards = {}
 
