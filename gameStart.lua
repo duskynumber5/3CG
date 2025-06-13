@@ -255,14 +255,12 @@ function GameClass:menuDraw()
     love.graphics.rectangle("fill", 0, 0, 1000, 700, 6, 6)
 
     resumeButton = button("resume", resume, nil, 200, 50)
-    restartButton = button("restart", restart, nil, 200, 50)
     menuButton = button("menu", menu, nil, 200, 50)
     exitButton = button("exit", exit, nil, 200, 50)
 
     resumeButton:draw(500 - 100, 300, 68, 20)
-    restartButton:draw(500 - 100, 375, 67, 20)
-    menuButton:draw(500 - 100, 450, 75, 20)
-    exitButton:draw(500 - 100, 525, 80, 20)
+    menuButton:draw(500 - 100, 400, 75, 20)
+    exitButton:draw(500 - 100, 500, 80, 20)
 
     love.graphics.rectangle("fill", 0, 150, 1000, 100, 6, 6)
 
@@ -486,15 +484,6 @@ function resume()
     game.state = game.prevState
 end
 
-function restart()
-    sounds.select:play()
-    sounds.background:stop()
-    love.load()
-    sounds.background:play()
-    game.state = GAME_STATE.PICK_CARDS
-    GameClass:deal()
-end
-
 function menu()
     sounds.select:play()
     love.load()
@@ -508,7 +497,6 @@ end
 function love.mousepressed(x, y, button, istouch)
     if button == 1 and game.state == GAME_STATE.MENU then
         resumeButton:checkPressed(x, y)
-        restartButton:checkPressed(x, y)
         menuButton:checkPressed(x, y)
         exitButton:checkPressed(x, y)
     end
